@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "docfieldbench"
+dynamic = ["version"]
+description = "An open benchmark for structured extraction from documents: wrong values, invented values, and what a pipeline can trust."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+dependencies = [
+  "jsonschema>=4.21",
+  "numpy>=1.24",
+  "scipy>=1.10",
+  "httpx>=0.27",
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.optional-dependencies]
+build = ["pypdfium2>=4.30", "pillow>=10.0"]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+docfieldbench = "docfieldbench.cli:main"
+
+[tool.hatch.version]
+path = "docfieldbench/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["docfieldbench"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

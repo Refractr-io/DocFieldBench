@@ -1,0 +1,37 @@
+{
+  "task_id": "fixture-opinion-1",
+  "doc_id": "fixture-opinion-1",
+  "track": "records",
+  "source": "fixture",
+  "license": "CC0-1.0",
+  "published": "2023-06-30",
+  "language": "en",
+  "locale": {"date_order": "MDY", "decimal": "."},
+  "document": {"path": "docs/fixture-opinion-1.pdf", "media_type": "application/pdf", "pages": 1, "condition": "born_digital"},
+  "variant_of": null,
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["case_number", "decision_date", "judges", "page_count", "appellant", "appellee", "court_division", "attorney"],
+    "properties": {
+      "case_number": {"type": ["string", "null"]},
+      "decision_date": {"type": ["string", "null"], "format": "date"},
+      "judges": {"type": ["array", "null"], "items": {"type": "string"}},
+      "page_count": {"type": ["integer", "null"]},
+      "appellant": {"type": ["string", "null"]},
+      "appellee": {"type": ["string", "null"]},
+      "court_division": {"type": ["string", "null"]},
+      "attorney": {"type": ["string", "null"]}
+    }
+  },
+  "fields": {
+    "/case_number": {"status": "present", "value": "2-21-0456", "match": "id", "provenance": "fixture"},
+    "/decision_date": {"status": "present", "value": "2023-06-30", "match": "date", "provenance": "fixture"},
+    "/judges": {"status": "present", "value": ["Maria Lopez", "Daniel Okafor"], "match": "array_scalars", "item_match": "name", "provenance": "fixture"},
+    "/page_count": {"status": "present", "value": 14, "match": "integer", "provenance": "fixture"},
+    "/appellant": {"status": "present", "value": "Acme Corporation", "match": "name", "provenance": "fixture", "tags": ["lookalike"]},
+    "/appellee": {"status": "present", "value": "City of Springfield", "match": "name", "provenance": "fixture", "tags": ["lookalike"]},
+    "/court_division": {"status": "absent", "value": null, "match": "short_text", "provenance": "fixture", "tags": ["absent"]},
+    "/attorney": {"status": "excluded", "value": null, "match": "name", "reason": "illegible in the scan", "provenance": "fixture"}
+  }
+}

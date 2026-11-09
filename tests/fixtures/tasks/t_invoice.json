@@ -1,0 +1,69 @@
+{
+  "task_id": "fixture-invoice-1",
+  "doc_id": "fixture-invoice-1",
+  "track": "business",
+  "source": "fixture",
+  "license": "CC0-1.0",
+  "published": null,
+  "language": "en",
+  "locale": {"date_order": "DMY", "decimal": ","},
+  "document": {"path": "docs/fixture-invoice-1.pdf", "media_type": "application/pdf", "pages": 1, "condition": "born_digital"},
+  "variant_of": null,
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["invoice_number", "invoice_date", "due_date", "total_incl_tax", "seller", "buyer_vat_id", "line_items", "paid"],
+    "properties": {
+      "invoice_number": {"type": ["string", "null"]},
+      "invoice_date": {"type": ["string", "null"], "format": "date"},
+      "due_date": {"type": ["string", "null"], "format": "date"},
+      "total_incl_tax": {"type": ["number", "null"]},
+      "seller": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "vat_id", "postcode"],
+        "properties": {
+          "name": {"type": ["string", "null"]},
+          "vat_id": {"type": ["string", "null"]},
+          "postcode": {"type": ["string", "null"]}
+        }
+      },
+      "buyer_vat_id": {"type": ["string", "null"]},
+      "line_items": {
+        "type": ["array", "null"],
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["description", "quantity", "line_total"],
+          "properties": {
+            "description": {"type": ["string", "null"]},
+            "quantity": {"type": ["number", "null"]},
+            "line_total": {"type": ["number", "null"]}
+          }
+        }
+      },
+      "paid": {"type": ["boolean", "null"]}
+    }
+  },
+  "fields": {
+    "/invoice_number": {"status": "present", "value": "INV-2024-0042", "match": "id", "provenance": "fixture"},
+    "/invoice_date": {"status": "present", "value": "2024-03-12", "match": "date", "provenance": "fixture", "tags": ["lookalike"]},
+    "/due_date": {"status": "present", "value": "2024-04-11", "match": "date", "provenance": "fixture", "tags": ["lookalike"]},
+    "/total_incl_tax": {"status": "present", "value": 1234.56, "match": "amount", "provenance": "fixture"},
+    "/seller/name": {"status": "present", "value": "Northwind Supplies Ltd", "match": "name", "accept": ["Northwind Supplies Limited"], "provenance": "fixture"},
+    "/seller/vat_id": {"status": "present", "value": "GB123456789", "match": "id", "provenance": "fixture"},
+    "/seller/postcode": {"status": "absent", "value": null, "match": "short_text", "provenance": "fixture", "tags": ["absent"]},
+    "/buyer_vat_id": {"status": "absent", "value": null, "match": "id", "provenance": "fixture", "tags": ["absent"]},
+    "/line_items": {
+      "status": "present",
+      "value": [
+        {"description": "Paper A4", "quantity": 10, "line_total": 45.0},
+        {"description": "Toner cartridge", "quantity": 2, "line_total": 189.5}
+      ],
+      "match": "array_objects",
+      "item_match": {"description": "short_text", "quantity": "number", "line_total": "amount"},
+      "provenance": "fixture"
+    },
+    "/paid": {"status": "present", "value": false, "match": "boolean", "provenance": "fixture"}
+  }
+}
