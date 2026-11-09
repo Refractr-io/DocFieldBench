@@ -17,8 +17,12 @@ Write the schema before you look at any system's output, with the field names yo
 - **Amounts:** a JSON number in the document's currency, without symbols (`1234.56`). Put the currency in its own
   field if you need it.
 - **Identifiers** (invoice numbers, VAT IDs, IBANs): as printed. The scorer ignores spaces, punctuation and case.
-- **Names and short text:** as printed. The scorer ignores case, extra spaces and punctuation at the ends. List other
-  acceptable spellings under `accept`.
+- **Names and short text:** as printed. The scorer ignores case, extra spaces and punctuation at the ends. For
+  `name` fields, titles and salutations ("Dr.", "Herrn") and a trailing legal form ("GmbH", "SARL", "Ltd",
+  "S.A. de C.V.") are optional. List other acceptable spellings under `accept`.
+- **Amounts printed negative** (a deduction, a credit-note line): give the value as the structured data has it and
+  add the negated value under `accept`, or list the column under `item_sign_either` for line items. Either sign then
+  scores.
 - **Booleans:** a checkbox or an explicit yes/no in the document. Never a guess from context.
 - **Lists:** every item, in document order.
 

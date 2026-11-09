@@ -76,6 +76,12 @@ def test_text_helpers():
     ("short_text", "Ave. Sta Margarita #3600", "Ave Sta Margarita 3600", True),
     ("short_text", "Paper A4", "Paper A3", False),
     ("date", "2024-03", "2024-03-01", False),
+    ("name", "Au bon moulin", "Au bon moulin SARL", True),
+    ("name", "MUSTER-Autovermietung GMBH", "Muster-Autovermietung", True),
+    ("name", "Acme S.A. de C.V.", "ACME", True),
+    ("name", "Max Mustermann", "Herrn Max Mustermann", True),
+    ("name", "MUSTERLIEFERANT GMBH", "KOSTENLIEFERANT GMBH", False),
+    ("short_text", "Au bon moulin", "Au bon moulin SARL", False),
 ])
 def test_same(kind, gold, pred, ok):
     assert same(kind, gold, pred, {"decimal": ","}) is ok

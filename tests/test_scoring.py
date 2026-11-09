@@ -105,6 +105,15 @@ def test_rows_are_aligned_not_indexed(tasks):
     assert c["correct"] == c["present"] and c["extra"] == 0
 
 
+def test_item_sign_either(tasks):
+    t = copy.deepcopy(tasks["fixture-invoice-1"])
+    g = gold_instance(t)
+    g["line_items"][1]["line_total"] = -189.5
+    assert outcomes(score_task(t, pred(g)))["/line_items/1/line_total"] == "wrong"
+    t["fields"]["/line_items"]["item_sign_either"] = ["line_total"]
+    assert outcomes(score_task(t, pred(g)))["/line_items/1/line_total"] == "correct"
+
+
 def test_missing_row_is_omitted(tasks):
     t = tasks["fixture-invoice-1"]
     g = gold_instance(t)
@@ -132,7 +141,9 @@ def test_accept_and_partial(tasks):
     g = gold_instance(t)
     g["seller"]["name"] = "Northwind Supplies Limited"
     assert outcomes(score_task(t, pred(g)))["/seller/name"] == "correct"
-    g["seller"]["name"] = "Northwind Supplies"
+    g["seller"]["name"] = "Northwind Supplies"            # the legal form is optional
+    assert outcomes(score_task(t, pred(g)))["/seller/name"] == "correct"
+    g["seller"]["name"] = "Northwind"
     s = score_task(t, pred(g))
     u = next(u for u in s["units"] if u["unit"] == "/seller/name")
     assert u["outcome"] == "wrong" and u["partial"]

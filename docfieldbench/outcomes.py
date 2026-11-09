@@ -19,7 +19,7 @@ from dataclasses import asdict, dataclass, field
 import numpy as np
 from scipy.optimize import linear_sum_assignment
 
-from .matchers import accepted, partial, same
+from .matchers import accepted, partial
 from .normalize import is_null_like_string, is_nullish, parse_number
 from .schema import base_type, conformance_errors, item_properties, iter_fields
 from .tasks import pointer_get
@@ -79,7 +79,14 @@ def _as_list(pred) -> list:
     return [] if is_nullish(pred) else [pred]
 
 
-def _align(gold_rows, pred_rows, item_match, locale):
+def _item_accept(rec: dict, f: str, g) -> list:
+    """Alternatives for one row value: the negated amount when the document prints it negative."""
+    if f in (rec.get("item_sign_either") or []) and isinstance(g, (int, float)) and not isinstance(g, bool) and g:
+        return [-g]
+    return []
+
+
+def _align(gold_rows, pred_rows, item_match, locale, rec):
     """Pairs (gold index, pred index) of rows that agree on at least half of the gold row's present fields."""
     if not gold_rows or not pred_rows:
         return []
@@ -89,7 +96,7 @@ def _align(gold_rows, pred_rows, item_match, locale):
         if not present:
             continue
         for j, p in enumerate(pred_rows):
-            hits = sum(same(item_match[f], g[f], p.get(f), locale) for f in present)
+            hits = sum(accepted(item_match[f], g[f], _item_accept(rec, f, g[f]), p.get(f), locale) for f in present)
             S[i, j] = hits / len(present)
     rows, cols = linear_sum_assignment(-S)
     return [(i, j) for i, j in zip(rows, cols, strict=True) if S[i, j] >= 0.5]
@@ -163,7 +170,7 @@ def score_task(task: dict, prediction: dict | None) -> dict:
         im = rec["item_match"]
         props = item_properties(node) or {}
         prows = [p if isinstance(p, dict) else {} for p in pred_rows]
-        pairs = {} if failed else dict(_align(gold_rows, prows, im, locale))
+        pairs = {} if failed else dict(_align(gold_rows, prows, im, locale, rec))
         matched_pred = set(pairs.values())
         for i, g in enumerate(gold_rows):
             j = pairs.get(i)
@@ -178,7 +185,7 @@ def score_task(task: dict, prediction: dict | None) -> dict:
                 elif j is None:
                     out, part = "omitted", False
                 else:
-                    out, part = _present_outcome(uid, k, gv, [], pv, pool, locale)
+                    out, part = _present_outcome(uid, k, gv, _item_accept(rec, f, gv), pv, pool, locale)
                 units.append(Unit(ptr, uid, "absent" if is_nullish(gv) else "present", out, k, gv,
                                   None if failed else pv, part, is_null_like_string(pv), row_tags))
         for j, p in enumerate(prows):

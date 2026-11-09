@@ -15,7 +15,17 @@ TITLES = {
     "mr", "mrs", "ms", "miss", "mx", "dr", "prof", "sir", "madam", "hon", "honorable", "jr", "sr", "esq",
     "dhr", "mevr", "mw", "ir", "drs", "herr", "frau", "sra", "srta", "don", "dona", "lic", "ing", "m", "mme", "mlle",
     "justice", "judge", "presiding", "chief", "associate", "magistrate", "acting",
+    "herrn", "monsieur", "madame", "heer", "mevrouw", "senor", "senora", "señor", "señora",
 }
+
+# legal forms, optional at the end of a company name ('Au bon moulin SARL' = 'Au bon moulin')
+LEGAL_SUFFIXES = [tuple(s.split()) for s in (
+    "gmbh", "ag", "kg", "ohg", "ug", "ek", "ev", "eg", "ag", "kgaa", "se", "mbh", "gmbh co kg", "co kg",
+    "sarl", "sas", "sasu", "sa", "eurl", "sca", "snc",
+    "ltd", "limited", "plc", "llp", "llc", "inc", "corp", "corporation", "co", "company",
+    "bv", "nv", "vof", "cv",
+    "srl", "spa", "sl", "slu", "sa de cv", "s de rl de cv", "s de rl", "de cv", "sapi de cv",
+)]
 
 
 def nfkc(s: str) -> str:
@@ -52,9 +62,19 @@ def alnum(v) -> str:
 
 
 def bare_name(v) -> str:
-    """A name without titles and punctuation: 'Dr. Jane O'Brien' -> 'janeobrien'."""
-    s = text_norm(v).replace("'", "").replace("’", "")
-    return "".join(t for t in re.findall(r"\w+", s) if t not in TITLES)
+    """A name without titles, a trailing legal form, and punctuation: 'Dr. Jane O'Brien' -> 'janeobrien',
+    'Au bon moulin SARL' -> 'aubonmoulin', 'Acme S.A. de C.V.' -> 'acme'."""
+    s = text_norm(v).replace("'", "").replace("’", "").replace(".", "")
+    toks = [t for t in re.findall(r"\w+", s) if t not in TITLES]
+    stripped = True
+    while stripped and len(toks) > 1:
+        stripped = False
+        for suf in sorted(LEGAL_SUFFIXES, key=len, reverse=True):
+            if len(toks) > len(suf) and tuple(toks[-len(suf):]) == suf:
+                toks = toks[: -len(suf)]
+                stripped = True
+                break
+    return "".join(toks)
 
 
 def tokens(v) -> set[str]:
