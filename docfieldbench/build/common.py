@@ -44,12 +44,24 @@ def decimal_mark(text: str) -> str:
     return "," if comma > dot else "."
 
 
+def _write_json(out: Path, task: dict) -> None:
+    tdir = out / "tasks"
+    tdir.mkdir(parents=True, exist_ok=True)
+    (tdir / f"{task['task_id']}.json").write_text(
+        json.dumps({"canary": CANARY, **task}, indent=1, ensure_ascii=False) + "\n")
+
+
 def write_task(out: Path, task: dict, doc_src: Path) -> None:
     """Write tasks/<task_id>.json and copy the document to the path the task names."""
-    task = {"canary": CANARY, **task}
     dst = out / task["document"]["path"]
     dst.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(doc_src, dst)
-    tdir = out / "tasks"
-    tdir.mkdir(parents=True, exist_ok=True)
-    (tdir / f"{task['task_id']}.json").write_text(json.dumps(task, indent=1, ensure_ascii=False) + "\n")
+    _write_json(out, task)
+
+
+def write_bytes_task(out: Path, task: dict, data: bytes) -> None:
+    """Like write_task, for a document that exists only as bytes (an image from a dataset file, a text body)."""
+    dst = out / task["document"]["path"]
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    dst.write_bytes(data)
+    _write_json(out, task)

@@ -22,7 +22,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-build = ["pypdfium2>=4.30", "pillow>=10.0"]
+build = ["pypdfium2>=4.30", "pillow>=10.0", "pyarrow>=14"]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]

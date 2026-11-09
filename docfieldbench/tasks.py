@@ -19,7 +19,7 @@ from .normalize import is_nullish
 from .schema import base_type, check_schema, item_properties, iter_fields, unescape
 
 STATUSES = ("present", "absent", "excluded")
-MEDIA_TYPES = ("application/pdf", "image/png", "image/jpeg", "text/html")
+MEDIA_TYPES = ("application/pdf", "image/png", "image/jpeg", "text/html", "text/plain")
 CONDITIONS = ("born_digital", "scan", "photo")
 MAX_PAGES = 10
 ARRAY_KINDS = ("array_scalars", "array_objects")

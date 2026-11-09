@@ -25,6 +25,8 @@ LEGAL_SUFFIXES = [tuple(s.split()) for s in (
     "ltd", "limited", "plc", "llp", "llc", "inc", "corp", "corporation", "co", "company",
     "bv", "nv", "vof", "cv",
     "srl", "spa", "sl", "slu", "sa de cv", "s de rl de cv", "s de rl", "de cv", "sapi de cv",
+    # judicial suffixes ('COFFEE, J.' = 'COFFEE') and 'et al.'
+    "j", "pj", "cj", "jj", "aj", "et al", "et als", "et at",
 )]
 
 

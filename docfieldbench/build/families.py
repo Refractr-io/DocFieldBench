@@ -87,8 +87,8 @@ INVOICE_LABELS = {
 # value shapes, each anchored at token boundaries (a label in front, like "IBAN DE75...", stays separate)
 _VAT = re.compile(
     r"(?<![A-Z0-9])(?:DE ?\d{3} ?\d{3} ?\d{3}|ATU ?\d{8}|FR ?[0-9A-Z]{2} ?\d{3} ?\d{3} ?\d{3}|NL ?\d{9} ?B ?\d{2}|"
-    r"BE ?0?\d{3}[ .]?\d{3}[ .]?\d{3}|LU ?\d{8}|IT ?\d{11}|ES ?[0-9A-Z]\d{7}[0-9A-Z]|GB ?\d{3} ?\d{4} ?\d{2}(?: ?\d{3})?|"
-    r"CHE[- ]?\d{3}\.?\d{3}\.?\d{3})(?![A-Z0-9])")
+    r"BE ?0?\d{3}[ .]?\d{3}[ .]?\d{3}|LU ?\d{8}|IT ?\d{11}|ES ?[0-9A-Z]\d{7}[0-9A-Z]|"
+    r"GB ?\d{3} ?\d{4} ?\d{2}(?: ?\d{3})?|CHE[- ]?\d{3}\.?\d{3}\.?\d{3})(?![A-Z0-9])")
 _IBAN = re.compile(r"(?<![A-Z0-9])[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?(?![A-Z0-9])")
 
 

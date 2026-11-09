@@ -58,7 +58,8 @@ def _num(s: str | None) -> float | None:
 
 def _name(node) -> str | None:
     s = _txt(node)
-    if s and "\n" in s:                      # "GLN 4333741000005\nSupplier no 549910\nSUPPLIER LTD": the last line names it
+    # "GLN 4333741000005\nSupplier no 549910\nSUPPLIER LTD": the last line names the party
+    if s and "\n" in s:
         s = s.splitlines()[-1].strip()
     return s
 

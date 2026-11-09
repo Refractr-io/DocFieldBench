@@ -82,6 +82,10 @@ def test_text_helpers():
     ("name", "Max Mustermann", "Herrn Max Mustermann", True),
     ("name", "MUSTERLIEFERANT GMBH", "KOSTENLIEFERANT GMBH", False),
     ("short_text", "Au bon moulin", "Au bon moulin SARL", False),
+    ("name", "COFFEE", "COFFEE, J.", True),
+    ("name", "McDADE", "McDADE, P.J.", True),
+    ("name", "RHONDA BARTLOW", "RHONDA BARTLOW et al.", True),
+    ("name", "COFFEE", "COFFEY, J.", False),
 ])
 def test_same(kind, gold, pred, ok):
     assert same(kind, gold, pred, {"decimal": ","}) is ok

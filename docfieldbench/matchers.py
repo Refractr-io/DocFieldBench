@@ -5,6 +5,8 @@ null) is conformance, scored separately (`schema.py`).
 """
 from __future__ import annotations
 
+import re
+
 from .normalize import alnum, bare_name, is_nullish, parse_date, parse_number, text_norm, tokens
 
 KINDS = ("id", "date", "amount", "number", "integer", "boolean", "name", "short_text")
@@ -64,9 +66,22 @@ def same(kind: str, gold, pred, locale: dict | None = None) -> bool:
     raise ValueError(f"unknown match kind: {kind}")
 
 
+def _name_pieces(pred: str) -> list[str]:
+    """'Daniel M. Kirwan and Edwin J. Anderson, both of Mt. Vernon' -> the names listed."""
+    s = re.split(r"\(|,? (?:both |all )?of ", pred)[0]
+    return [p.strip(" ,.;") for p in re.split(r"\s+(?:and|und|en|et|y|&)\s+|;|,", s) if p.strip(" ,.;")]
+
+
 def accepted(kind: str, gold, accept, pred, locale: dict | None = None) -> bool:
-    """`pred` matches the gold value or one of its accepted alternatives."""
-    return any(same(kind, g, pred, locale) for g in [gold, *(accept or [])])
+    """`pred` matches the gold value or one of its accepted alternatives. For names, a string listing several names
+    counts when every name listed is one of them ('Kirwan and Anderson' where both are accepted)."""
+    vals = [gold, *(accept or [])]
+    if any(same(kind, g, pred, locale) for g in vals):
+        return True
+    if kind == "name" and isinstance(pred, str):
+        pieces = _name_pieces(pred)
+        return len(pieces) > 1 and all(any(same(kind, g, p, locale) for g in vals) for p in pieces)
+    return False
 
 
 def partial(kind: str, gold, pred) -> bool:

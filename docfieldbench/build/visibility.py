@@ -85,7 +85,8 @@ class TextIndex:
         return self.has_string(value)
 
     def has_label(self, labels) -> bool:
-        return any(text_norm(lb) in self.norm for lb in labels)
+        """Some label appears as whole words ("RIN" never matches inside "during")."""
+        return any(re.search(rf"(?<!\w){re.escape(text_norm(lb))}(?!\w)", self.norm) for lb in labels)
 
     def label_with_value(self, labels, kind: str, window: int = 80) -> bool:
         """Some label is followed (within `window` characters of reading order) by a value of this kind.
@@ -96,7 +97,7 @@ class TextIndex:
         flat = re.sub(r"\s+", " ", self.text)
         low = flat.casefold()
         for lb in labels:
-            for m in re.finditer(re.escape(lb.casefold()), low):
+            for m in re.finditer(rf"(?<!\w){re.escape(lb.casefold())}(?!\w)", low):
                 after = flat[m.end():m.end() + window]
                 if kind == "date":
                     if TextIndex([after]).dates:

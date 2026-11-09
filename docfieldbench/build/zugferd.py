@@ -220,7 +220,8 @@ def main(argv=None) -> int:
     print("languages:", dict(Counter(t["language"] for t in tasks)), "| credit notes:",
           sum(t["doc_type"] == "credit_note" for t in tasks))
     for p in [*INVOICE_MATCH, "/line_items"]:
-        print(f"  {p:24} present={st[(p, 'present')]:3d} absent={st[(p, 'absent')]:3d} excluded={st[(p, 'excluded')]:3d}")
+        print(f"  {p:24} present={st[(p, 'present')]:3d} absent={st[(p, 'absent')]:3d} "
+              f"excluded={st[(p, 'excluded')]:3d}")
     return 0
 
 
