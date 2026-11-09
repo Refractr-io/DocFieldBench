@@ -7,7 +7,7 @@ gold written for DocFieldBench are CC BY 4.0.
 |---|---|---|
 | ZUGFeRD corpus (github.com/ZUGFeRD/corpus) | Apache-2.0 | e-invoice PDFs with embedded XML |
 | KoSIT XRechnung test suite (github.com/itplr-kosit/xrechnung-testsuite) | Apache-2.0 | XML instances, rendered to PDF for this benchmark |
-| invoice2data test invoices (github.com/invoice2data/invoice2data) | MIT | |
+| invoice2data test invoices (github.com/invoice-x/invoice2data) | MIT | |
 | Caselaw Access Project | CC0 | |
 | Federal Register (federalregister.gov) | public domain | US government work |
 | SEC EDGAR filings | public domain | US government records |
