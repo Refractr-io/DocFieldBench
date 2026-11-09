@@ -16,6 +16,7 @@ dependencies = [
   "httpx>=0.27",
 ]
 classifiers = [
+  "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
   "License :: OSI Approved :: Apache Software License",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -30,6 +31,11 @@ docfieldbench = "docfieldbench.cli:main"
 
 [tool.hatch.version]
 path = "docfieldbench/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["docfieldbench", "tests", "README.md", "LICENSE", "CHANGELOG.md", "GOLD_GUIDE.md",
+           "DATA_LICENSES.md", "pyproject.toml"]
+exclude = ["docfieldbench/**/__pycache__"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["docfieldbench"]

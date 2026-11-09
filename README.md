@@ -4,8 +4,8 @@ An open benchmark for structured extraction from documents. It measures what cos
 values that are wrong or invented, fields that should have stayed empty, responses that break the schema, and how
 long it all takes. Run it on the included documents, or on your own.
 
-> **Status: pre-release.** The scoring core is in place; the dataset (v1.0.0) is being built. Nothing here is a
-> result yet.
+> **Status: pre-release (0.1.0a1).** The package holds the scoring core, so you can score your own documents today.
+> The dataset (v1.0.0) is being built. Nothing here is a result yet.
 
 ## What it measures
 Every task is a document (PDF, image or HTML, up to 10 pages) with a JSON schema and a gold answer for every field.
@@ -34,15 +34,21 @@ line items, values that need normalising), with 95% confidence intervals from a 
 
 No gold value comes from a model.
 
-## Quickstart (once v1.0.0 is published)
+## Quickstart (pre-release)
 ```bash
-pip install docfieldbench
-docfieldbench data download v1.0.0
-docfieldbench run --system openai_structured --model <model> --track business
-docfieldbench report results/<run>
+pip install --pre docfieldbench
+docfieldbench validate my_tasks/                          # check your task files (schema and gold)
+docfieldbench score my_tasks/ predictions.jsonl --summary summary.json
+docfieldbench baseline my_tasks/ --out all_null.jsonl     # the all-null baseline, for comparison
 ```
-Bring your own extractor (a Python function or any HTTP endpoint) and your own documents (a folder plus a gold file
-per document). See `GOLD_GUIDE.md`.
+- **Tasks:** one JSON file per document, with its schema and a gold record per field. `GOLD_GUIDE.md` describes the
+  format and the labelling rules.
+- **Predictions:** one JSON object per line, either `{"task_id": ..., "raw": "<the system's reply>"}` (parsed the way
+  `json.loads` would see it) or `{"task_id": ..., "parse_status": "ok", "parsed": {...}}`. A task without a line
+  counts as a failed response.
+
+Coming with v1.0.0: `docfieldbench data download`, a `run` command with adapters for common APIs and local models, and
+`report`.
 
 ## Licenses
 Code: Apache-2.0. Schemas and gold: CC BY 4.0. Every document keeps its own license, listed per document in the
