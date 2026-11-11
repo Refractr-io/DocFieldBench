@@ -44,7 +44,10 @@ def _safe_extract(tar: tarfile.TarFile, dest: Path) -> None:
         target = (dest / m.name).resolve()
         if not str(target).startswith(str(dest.resolve())) or m.issym() or m.islnk():
             raise SystemExit(f"refusing archive member {m.name}")
-    tar.extractall(dest)
+    try:
+        tar.extractall(dest, filter="data")
+    except TypeError:                                           # Python < 3.12: members were checked above
+        tar.extractall(dest)
 
 
 def download(version: str, url: str | None, from_file: Path | None, dest: Path) -> int:

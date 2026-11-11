@@ -4,8 +4,8 @@ An open benchmark for structured extraction from documents. It measures what cos
 values that are wrong or invented, fields that should have stayed empty, responses that break the schema, and how
 long it all takes. Run it on the included documents, or on your own.
 
-> **Status: pre-release (0.1.0a1).** The package holds the scoring core, so you can score your own documents today.
-> The dataset (v1.0.0) is being built. Nothing here is a result yet.
+> **Status: release candidate.** The dataset (260 documents) is built and in blind adjudication; v1.0.0 follows when
+> the adjudication log is published. Nothing here is a result yet.
 
 ## What it measures
 Every task is a document (PDF, image or HTML, up to 10 pages) with a JSON schema and a gold answer for every field.
@@ -37,27 +37,45 @@ line items, values that need normalising), with 95% confidence intervals from a 
 ## Tracks
 | track | what | gold from |
 |---|---|---|
-| Business | invoices, credit notes, receipts, statements, delivery notes | embedded e-invoice XML, hand labels, rendering records |
-| Records | filings, patents, rules, court opinions | the documents' own markup and official metadata |
-| Forms | government forms | programmatic form fills |
+| Business (100) | invoices, receipts, bank and account statements, delivery notes, payslips | embedded e-invoice XML, hand labels, rendering records |
+| Records (100) | court opinions, Federal Register rules, SEC cover pages and Form 4s | the documents' own markup and official metadata |
+| Forms (60) | US government forms, scanned and filled | dataset labels, programmatic form fills |
+
+Single-page PDFs also come as a scan or photo with the same gold; those are reported by condition, not in the score.
 
 No gold value comes from a model.
 
-## Quickstart (pre-release)
+## Quickstart
 ```bash
 pip install --pre docfieldbench
-docfieldbench validate my_tasks/                          # check your task files (schema and gold)
-docfieldbench score my_tasks/ predictions.jsonl --summary summary.json
-docfieldbench baseline my_tasks/ --out all_null.jsonl     # the all-null baseline, for comparison
+docfieldbench data download v1.0.0 --url RELEASE_URL           # or --from-file; every file is checked
+docfieldbench run data/v1.0.0/tasks --system my_system.json --out preds.jsonl
+docfieldbench score data/v1.0.0/tasks preds.jsonl --summary summary.json
+docfieldbench baseline data/v1.0.0/tasks --out all_null.jsonl   # the all-null baseline, for comparison
 ```
+A system config names an adapter and a reading step:
+```json
+{"name": "my-model", "adapter": "openai_compat", "reader": "native",
+ "options": {"model": "vendor/model", "base_url": "https://openrouter.ai/api/v1", "api_key_env": "OPENROUTER_API_KEY"}}
+```
+- **Adapters:** `openai_compat` (any OpenAI-style chat API: hosted, vLLM, llama.cpp, Ollama) and `python` (your
+  own function, `path/to/file.py:extract`).
+- **Reading steps:** `native` (the file as it is), `pages_png` (PDF pages as images, for vision models without PDF
+  input), `text` (text layer; Tesseract with default settings for images and scans). The step is part of the system
+  and appears in its config hash.
+- **Protocol:** the published prompt (`docfieldbench/prompt.py`), one request per document, the first reply scored;
+  only transport failures are retried. `--pilot N` runs the N largest documents and projects the cost; `--budget`
+  stops a run; `--resume` never pays twice. Each run writes spend and latency next to its predictions.
+
+### Your own documents
+`docfieldbench init` turns a folder and a schema into task stubs to label, `inject-absent` adds fields your documents
+provably don't state, and `run` and `score` work as above. `examples/` walks through it with three receipts.
 - **Tasks:** one JSON file per document, with its schema and a gold record per field. `GOLD_GUIDE.md` describes the
   format and the labelling rules.
 - **Predictions:** one JSON object per line, either `{"task_id": ..., "raw": "<the system's reply>"}` (parsed the way
   `json.loads` would see it) or `{"task_id": ..., "parse_status": "ok", "parsed": {...}}`. A task without a line
   counts as a failed response.
 
-Coming with v1.0.0: `docfieldbench data download`, a `run` command with adapters for common APIs and local models, and
-`report`.
 
 ## Licenses
 Code: Apache-2.0. Schemas and gold: CC BY 4.0. Every document keeps its own license, listed per document in the
