@@ -3,6 +3,7 @@
   docfieldbench validate TASKS              check every task file
   docfieldbench score TASKS PREDICTIONS     score a predictions file (JSONL, one object per task)
   docfieldbench baseline TASKS --out FILE   the all-null baseline (calibrates the absence metric)
+  docfieldbench run TASKS --system CFG --out FILE   send every task to one system (see run.py for the config)
 
 A predictions line is {"task_id", "parse_status", "parsed"} or {"task_id", "raw"} (parsed here). A task without a
 line scores as a failed response.
@@ -57,7 +58,8 @@ def cmd_score(a) -> int:
     h = headline(scored, n_boot=a.n_boot)
     if h["score"] is not None:
         tracks = ", ".join(f"{t} {100 * v:.1f}" for t, v in h["tracks"].items())
-        print(f"DocFieldBench score: {100 * h['score']:.1f}  (95% CI {100 * h['lo']:.1f}-{100 * h['hi']:.1f}; {tracks})\n")
+        ci = f"95% CI {100 * h['lo']:.1f}-{100 * h['hi']:.1f}"
+        print(f"DocFieldBench score: {100 * h['score']:.1f}  ({ci}; {tracks})\n")
     print(f"{'group':22} {'docs':>5} {'score':>6} {'prec':>6} {'recall':>6} {'abst':>6} {'silent':>6} {'swap':>6} "
           f"{'exact':>6} {'conf':>6}")
     summary = {"score": h}
@@ -84,6 +86,26 @@ def cmd_baseline(a) -> int:
     return 0
 
 
+def cmd_run(a) -> int:
+    from . import run as runner
+    cfg = json.loads(Path(a.system).read_text())
+    tasks = load_tasks(a.tasks)
+    if a.only:
+        tasks = [t for t in tasks if t["task_id"].startswith(tuple(a.only.split(",")))]
+    if a.skip:
+        tasks = [t for t in tasks if not t["task_id"].startswith(tuple(a.skip.split(",")))]
+    root = Path(a.tasks).resolve().parent
+    n_total = len(tasks)
+    if a.pilot:
+        tasks = runner.pilot(tasks, root, a.pilot)
+    preds = runner.run(tasks, root, cfg, Path(a.out), resume=a.resume, concurrency=a.concurrency, budget=a.budget)
+    spent = sum(p.get("cost_usd") or 0 for p in preds)
+    print(f"{len(preds)} replies, ${spent:.4f}")
+    if a.pilot:
+        print("projection for all", n_total, "tasks:", json.dumps(runner.projection(preds, n_total)))
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="docfieldbench", description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -101,6 +123,17 @@ def main(argv=None) -> int:
     b.add_argument("tasks", type=Path)
     b.add_argument("--out", required=True)
     b.set_defaults(func=cmd_baseline)
+    r = sub.add_parser("run")
+    r.add_argument("tasks", type=Path)
+    r.add_argument("--system", required=True, help="system config (JSON)")
+    r.add_argument("--out", required=True, help="predictions file (JSONL), appended as replies arrive")
+    r.add_argument("--resume", action="store_true")
+    r.add_argument("--only", help="comma-separated task_id prefixes")
+    r.add_argument("--skip", help="comma-separated task_id prefixes")
+    r.add_argument("--concurrency", type=int, default=1)
+    r.add_argument("--budget", type=float, help="stop once this many USD are spent")
+    r.add_argument("--pilot", type=int, help="run only the N largest tasks and project the full run's cost")
+    r.set_defaults(func=cmd_run)
     a = ap.parse_args(argv)
     return a.func(a)
 
