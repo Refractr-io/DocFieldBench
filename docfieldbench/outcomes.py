@@ -195,5 +195,6 @@ def score_task(task: dict, prediction: dict | None) -> dict:
                 if f in im and not is_nullish(pv):
                     units.append(Unit(ptr, f"{ptr}/+{j}/{f}", "extra", "extra", im[f], None, pv, tags=row_tags))
 
-    return {"task_id": task["task_id"], "track": task.get("track"), "doc": doc,
+    return {"task_id": task["task_id"], "track": task.get("track"), "variant_of": task.get("variant_of"),
+            "condition": (task.get("document") or {}).get("condition"), "doc": doc,
             "units": [asdict(u) for u in units]}

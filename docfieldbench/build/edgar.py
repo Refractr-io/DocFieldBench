@@ -32,7 +32,7 @@ from .visibility import TextIndex
 
 SEED = 20261111
 DAYS = ["20261102", "20261103", "20261104", "20261105", "20261106", "20261109", "20261110"]
-N_COVER, N_FORM4, MAX_PER_FAMILY = 15, 6, 6
+N_COVER, N_FORM4, MAX_PER_FAMILY = 19, 6, 6
 LEAK = re.compile(r"ix:|dei:|us-gaap|xbrli|contextref|ix-|xbrl\.org", re.I)
 
 

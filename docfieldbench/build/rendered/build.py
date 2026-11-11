@@ -28,8 +28,8 @@ SEED = 20261111
 PLAN = [("invoice", "inv_letter", 5), ("invoice", "inv_band", 5), ("invoice", "inv_grid", 5),
         ("receipt", "rc_thermal", 5), ("receipt", "rc_store", 5), ("receipt", "rc_slip", 5),
         ("bank_statement", "bs_bank", 5), ("account_statement", "as_supplier", 5),
-        ("delivery_note", "dn_classic", 4), ("delivery_note", "dn_warehouse", 4),
-        ("payslip", "ps_twocol", 4), ("payslip", "ps_list", 4)]
+        ("delivery_note", "dn_classic", 5), ("delivery_note", "dn_warehouse", 5),
+        ("payslip", "ps_twocol", 5), ("payslip", "ps_list", 5)]
 DROP_COLUMNS = {"rc_store": {"/line_items": ["unit_price"]}}          # columns a template doesn't print
 SIGN_EITHER = {"ps_list": {"/deductions": ["amount"]}}               # printed with a minus there, positive elsewhere
 NOT_DRAWN = {"check": "not drawn: the rendering record has no value for this field"}

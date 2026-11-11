@@ -127,9 +127,12 @@ def summarize(scored_tasks: list[dict], unit_filter=None, n_boot: int = 10_000, 
 
 def headline(scored_tasks: list[dict], n_boot: int = 10_000, seed: int = 0, alpha: float = 0.05) -> dict:
     """The DocFieldBench score (module docstring): the mean over tracks of the document-macro field score, with a
-    percentile CI from a bootstrap that resamples documents within each track."""
+    percentile CI from a bootstrap that resamples documents within each track. Scan and photo variants are reported
+    by condition, never in the score: a document counts once."""
     by_track: dict[str, list[float]] = {}
     for s in scored_tasks:
+        if s.get("variant_of"):
+            continue
         c = doc_counts(s)
         if c["scored"] > 0:
             by_track.setdefault(s.get("track") or "all", []).append(c["score_points"] / c["scored"])

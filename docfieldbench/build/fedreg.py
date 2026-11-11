@@ -28,7 +28,7 @@ from .visibility import TextIndex
 API = "https://www.federalregister.gov/api/v1/documents.json"
 FIELDS = ["document_number", "comments_close_on", "publication_date", "body_html_url", "page_length", "docket_ids",
           "regulation_id_numbers", "agencies", "type", "title"]
-SEED, N, MAX_PER_AGENCY = 20261111, 10, 2
+SEED, N, MAX_PER_AGENCY = 20261111, 6, 2       # 6: one layout family (the HTML edition), capped like any
 DASH = str.maketrans({"‐": "-", "‑": "-", "‒": "-", "–": "-", "—": "-", "−": "-"})
 
 

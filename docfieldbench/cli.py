@@ -52,9 +52,14 @@ def cmd_score(a) -> int:
     tasks = load_tasks(a.tasks)
     preds = _load_predictions(a.predictions)
     scored = [score_task(t, preds.get(t["task_id"])) for t in tasks]
-    groups = {"all": scored}
-    for s in scored:
+    primaries = [s for s in scored if not s.get("variant_of")]
+    groups = {"all": primaries}
+    for s in primaries:
         groups.setdefault(f"track={s['track']}", []).append(s)
+    if len({s.get("condition") for s in scored}) > 1:                         # variants included: per condition
+        for s in scored:
+            groups.setdefault(f"condition={s.get('condition') or '?'}", []).append(s)
+    tags = sorted({t for s in primaries for u in s["units"] for t in (u.get("tags") or [])})
     h = headline(scored, n_boot=a.n_boot)
     if h["score"] is not None:
         tracks = ", ".join(f"{t} {100 * v:.1f}" for t, v in h["tracks"].items())
@@ -70,6 +75,12 @@ def cmd_score(a) -> int:
               f"{_fmt(m['recall']['macro'])}  "
               f"{_fmt(m['abstention']['macro'])}  {_fmt(m['silent_error_rate']['macro'])}  "
               f"{_fmt(m['swap_rate']['macro'])}  {_fmt(m['exact_docs']['macro'])}  {_fmt(m['conformance']['macro'])}")
+    for tag in tags:
+        m = summarize(primaries, unit_filter=lambda u, tag=tag: tag in (u.get("tags") or []), n_boot=a.n_boot)
+        summary[f"tag={tag}"] = m
+        cols = [m[k]["macro"] for k in ("field_score", "precision", "recall", "abstention", "silent_error_rate",
+                                         "swap_rate")]
+        print(f"{'tag=' + tag:22} {'':5} " + "  ".join(_fmt(x) for x in cols))
     if a.out:
         with open(a.out, "w") as f:
             for s in scored:
