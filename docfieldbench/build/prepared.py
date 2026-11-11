@@ -103,10 +103,7 @@ def _record(kind, value, idx, alt, provenance):
     return {"status": "present", "value": value, **rec, **({"evidence": ev} if ev else {})}
 
 
-def fedreg_task(c: dict, docs: Path) -> tuple[dict, Path]:
-    f = docs / c["file"]
-    idx = TextIndex(pdf.page_texts(f))
-    gold, alt = c["gold"], c.get("alt") or {}
+def fedreg_fields(gold: dict, alt: dict, idx: TextIndex) -> dict:
     fields = {}
     for k, (_, kind) in FEDREG_FIELDS.items():
         v = _value(kind, gold.get(k), "MDY")
@@ -119,13 +116,23 @@ def fedreg_task(c: dict, docs: Path) -> tuple[dict, Path]:
                             "reason": "a label for this field is printed but the metadata has no value"} if blocked
                            else {"status": "absent", "value": None, "match": kind, "provenance": "official_metadata",
                                  "evidence": {"check": "no label followed by a value of this kind"}})
+    return fields
+
+
+def fedreg_task(c: dict, docs: Path, idx: TextIndex | None = None, media: str = "application/pdf") -> tuple[dict, Path]:
+    """A Federal Register task. `idx` and `media` are given for a document that isn't a PDF (the HTML edition)."""
+    f = docs / c["file"]
+    idx = idx or TextIndex(pdf.page_texts(f))
+    fields = fedreg_fields(c["gold"], c.get("alt") or {}, idx)
+    gold = c["gold"]
     tid = f"fedreg-{slug(c['id'].split('_', 1)[1])}"
+    ext = "pdf" if media == "application/pdf" else "html"
     task = {"task_id": tid, "doc_id": tid, "track": "records", "family": "federal_register_document",
             "source": "federal-register", "license": "Public-Domain-US-Government",
             "published": gold.get("publication_date"),
             "language": "en", "locale": {"date_order": "MDY", "decimal": "."},
-            "document": {"path": f"docs/{tid}.pdf", "media_type": "application/pdf", "pages": pdf.page_count(f),
-                         "condition": "born_digital"},
+            "document": {"path": f"docs/{tid}.{ext}", "media_type": media,
+                         "pages": pdf.page_count(f) if ext == "pdf" else 1, "condition": "born_digital"},
             "variant_of": None, "schema": template_to_schema({k: ph for k, (ph, _) in FEDREG_FIELDS.items()}),
             "fields": fields}
     return task, f

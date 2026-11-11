@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-build = ["pypdfium2>=4.30", "pillow>=10.0", "pyarrow>=14", "weasyprint>=62"]
+build = ["pypdfium2>=4.30", "pillow>=10.0", "pyarrow>=14", "weasyprint>=62", "pypdf>=5"]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
@@ -53,3 +53,4 @@ testpaths = ["tests"]
 [tool.ruff.lint.per-file-ignores]
 # word lists, printed labels and HTML templates: long string literals read better unwrapped
 "docfieldbench/build/rendered/{labels,vocab,templates,records}.py" = ["E501"]
+"docfieldbench/build/formfill.py" = ["E501"]   # the per-form field maps
