@@ -2,7 +2,8 @@
 """Refuse files (or a commit message) that contain secrets, absolute home paths, or locally denied patterns.
 
 Generic patterns live here. Project-specific patterns come from a local, untracked `.guard-local` file (one regular
-expression per line, `#` starts a comment) and from the `GUARD_DENYLIST` environment variable (newline-separated), so
+expression per line, `#` starts a comment; a line `@file:PATH` denies, literally, every address-like token in that
+local file) and from the `GUARD_DENYLIST` environment variable (newline-separated), so
 the patterns themselves never enter the repository.
 
   python scripts/guard.py              scan tracked and untracked-but-not-ignored files
@@ -25,6 +26,7 @@ GENERIC = {
     "google api key": r"\bAIza[0-9A-Za-z_-]{35}\b",
     "slack token": r"\bxox[abprs]-[A-Za-z0-9-]{10,}",
     "private key": r"-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----",
+    "email address": r"\b[A-Za-z0-9._%+-]+@(?!example\.(?:com|org)\b)[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b",
     "absolute home path": r"(/home/[a-z_][a-z0-9_.-]*/|/Users/[A-Za-z][A-Za-z0-9_.-]*/|[A-Za-z]:\\Users\\)",
 }
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +38,13 @@ def local_patterns():
     lines = f.read_text().splitlines() if f.exists() else []
     lines += [x for x in os.environ.get("GUARD_DENYLIST", "").splitlines()]
     for i, line in enumerate(x.strip() for x in lines):
-        if line and not line.startswith("#"):
+        if line.startswith("@file:"):
+            src = Path(line[6:].strip()).expanduser()
+            toks = src.read_text().split() if src.exists() else []
+            for t in toks:
+                if "@" in t:
+                    pats[f"denied local value (line {i + 1})"] = re.escape(t.strip("<>()\"'"))
+        elif line and not line.startswith("#"):
             pats[f"denied pattern #{i + 1}"] = line
     return pats
 
@@ -49,8 +57,14 @@ def is_binary(data: bytes):
     return b"\0" in data[:8192]
 
 
+# public source documents print contact addresses; the build's PII gate checks data/
+DATA_EXEMPT = {"email address"}
+
+
 def scan_text(label, text, patterns, hits):
     for name, rx in patterns.items():
+        if name in DATA_EXEMPT and label.startswith("data/"):
+            continue
         for m in rx.finditer(text):
             line = text.count("\n", 0, m.start()) + 1
             hits.append(f"{label}:{line}: {name}")
