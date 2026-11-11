@@ -1,0 +1,27 @@
+{
+ "order_number": {
+  "type": "string",
+  "match": "id",
+  "labels": [
+   "order",
+   "PO",
+   "purchase order"
+  ]
+ },
+ "loyalty_card_number": {
+  "type": "string",
+  "match": "id",
+  "labels": [
+   "loyalty",
+   "member",
+   "club card"
+  ]
+ },
+ "table_number": {
+  "type": "integer",
+  "match": "integer",
+  "labels": [
+   "table"
+  ]
+ }
+}

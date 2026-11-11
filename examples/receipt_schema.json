@@ -1,0 +1,159 @@
+{
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "merchant",
+  "receipt_number",
+  "date",
+  "payment_method",
+  "card_last4",
+  "subtotal",
+  "tax_total",
+  "tip",
+  "total",
+  "line_items"
+ ],
+ "properties": {
+  "merchant": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "name",
+    "street",
+    "postcode",
+    "city",
+    "vat_id",
+    "phone"
+   ],
+   "properties": {
+    "name": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "street": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "postcode": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "city": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "vat_id": {
+     "type": [
+      "string",
+      "null"
+     ]
+    },
+    "phone": {
+     "type": [
+      "string",
+      "null"
+     ]
+    }
+   }
+  },
+  "receipt_number": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "date": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "format": "date"
+  },
+  "payment_method": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "card_last4": {
+   "type": [
+    "string",
+    "null"
+   ]
+  },
+  "subtotal": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "tax_total": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "tip": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "total": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "line_items": {
+   "type": [
+    "array",
+    "null"
+   ],
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "description",
+     "quantity",
+     "unit_price",
+     "line_total"
+    ],
+    "properties": {
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "unit_price": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "line_total": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    }
+   }
+  }
+ }
+}

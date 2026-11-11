@@ -5,6 +5,8 @@
   docfieldbench baseline TASKS --out FILE   the all-null baseline (calibrates the absence metric)
   docfieldbench run TASKS --system CFG --out FILE   send every task to one system (see run.py for the config)
   docfieldbench adjudicate build|apply ...   blind review of gold against systems' answers (adjudicate.py)
+  docfieldbench init DOCS --schema S --out DIR   task stubs for your own documents (byo.py)
+  docfieldbench inject-absent TASKS --fields F    add provably absent fields to your tasks (byo.py)
 
 A predictions line is {"task_id", "parse_status", "parsed"} or {"task_id", "raw"} (parsed here). A task without a
 line scores as a failed response.
@@ -155,6 +157,21 @@ def main(argv=None) -> int:
     r.add_argument("--budget", type=float, help="stop once this many USD are spent")
     r.add_argument("--pilot", type=int, help="run only the N largest tasks and project the full run's cost")
     r.set_defaults(func=cmd_run)
+    i = sub.add_parser("init")
+    i.add_argument("docs", type=Path)
+    i.add_argument("--schema", type=Path, required=True)
+    i.add_argument("--out", type=Path, required=True)
+    i.add_argument("--track", default="business")
+    i.add_argument("--family", default="custom")
+    i.set_defaults(func=lambda a: __import__("docfieldbench.byo", fromlist=["init"]).init(
+        a.docs, a.schema, a.out, a.track, a.family))
+    ia = sub.add_parser("inject-absent")
+    ia.add_argument("tasks", type=Path)
+    ia.add_argument("--fields", type=Path, required=True)
+    ia.add_argument("--per-doc", type=int, default=1)
+    ia.add_argument("--seed", default="0")
+    ia.set_defaults(func=lambda a: __import__("docfieldbench.byo", fromlist=["inject_absent"]).inject_absent(
+        a.tasks, a.fields, a.per_doc, a.seed))
     a = ap.parse_args(argv)
     return a.func(a)
 
