@@ -12,6 +12,7 @@ from __future__ import annotations
 import io
 import shutil
 import subprocess
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -27,16 +28,25 @@ class Document:
     reader: str = "native"
 
 
+_PDFIUM = threading.Lock()          # PDFium is not thread-safe; runs with --concurrency share it
+
+
 def _pdf_text_layer(data: bytes) -> list[str]:
     import pypdfium2 as pdfium
-    pdf = pdfium.PdfDocument(data)
-    try:
-        return [pdf[i].get_textpage().get_text_range() for i in range(len(pdf))]
-    finally:
-        pdf.close()
+    with _PDFIUM:
+        pdf = pdfium.PdfDocument(data)
+        try:
+            return [pdf[i].get_textpage().get_text_range() for i in range(len(pdf))]
+        finally:
+            pdf.close()
 
 
 def _pdf_pages_png(data: bytes, dpi: int = 150) -> list[bytes]:
+    with _PDFIUM:
+        return _render_pages(data, dpi)
+
+
+def _render_pages(data: bytes, dpi: int) -> list[bytes]:
     import pypdfium2 as pdfium
     pdf = pdfium.PdfDocument(data)
     out = []
