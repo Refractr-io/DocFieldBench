@@ -89,3 +89,10 @@ def test_text_helpers():
 ])
 def test_same(kind, gold, pred, ok):
     assert same(kind, gold, pred, {"decimal": ","}) is ok
+
+
+def test_judicial_titles_and_number_labels():
+    from docfieldbench.matchers import same
+    assert same("name", "SIMS", "SIMS, Acting P. J.") and same("name", "TURNER", "TURNER, P. J.")
+    assert same("id", "H034702", "No. H034702") and same("id", "3-05-0550", "Nos. 3-05-0550")
+    assert not same("id", "NO123456789MVA", "123456789MVA")          # a Norwegian VAT number keeps its letters

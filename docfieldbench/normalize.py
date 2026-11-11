@@ -26,7 +26,7 @@ LEGAL_SUFFIXES = [tuple(s.split()) for s in (
     "bv", "nv", "vof", "cv",
     "srl", "spa", "sl", "slu", "sa de cv", "s de rl de cv", "s de rl", "de cv", "sapi de cv",
     # judicial suffixes ('COFFEE, J.' = 'COFFEE') and 'et al.'
-    "j", "pj", "cj", "jj", "aj", "et al", "et als", "et at",
+    "j", "pj", "cj", "jj", "aj", "p j", "c j", "j j", "a j", "et al", "et als", "et at",
 )]
 
 
@@ -56,6 +56,14 @@ def text_norm(v) -> str:
     """Casefolded, whitespace collapsed, punctuation stripped at both ends."""
     s = re.sub(r"\s+", " ", nfkc(str(v)).casefold()).strip()
     return _strip_edge_punct(s).strip()
+
+
+_ID_LABEL = re.compile(r"^\s*(?:no|nos|nr|number|num|n°|nº)\s*[.:]?\s+(?=\S)", re.IGNORECASE)
+
+
+def id_core(v) -> str:
+    """An identifier without a leading number label: 'No. H034702' -> 'h034702' ('NO123' keeps its letters)."""
+    return alnum(_ID_LABEL.sub("", nfkc(str(v)), count=1))
 
 
 def alnum(v) -> str:

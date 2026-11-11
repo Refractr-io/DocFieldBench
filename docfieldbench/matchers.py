@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import re
 
-from .normalize import alnum, bare_name, is_nullish, parse_date, parse_number, text_norm, tokens
+from .normalize import alnum, bare_name, id_core, is_nullish, parse_date, parse_number, text_norm, tokens
 
 KINDS = ("id", "date", "amount", "number", "integer", "boolean", "name", "short_text")
 STRING_KINDS = ("id", "name", "short_text")
@@ -52,7 +52,7 @@ def same(kind: str, gold, pred, locale: dict | None = None) -> bool:
         return g is not None and p is not None and g[0] == p[0]
     if kind == "id":
         a, b = alnum(gold), alnum(pred)
-        return bool(a) and a == b
+        return bool(a) and (a == b or id_core(gold) == id_core(pred) != "")
     if kind in ("name", "short_text"):
         if text_norm(gold) == text_norm(pred):
             return True
