@@ -109,3 +109,12 @@ def test_run_summary_measures_spend_and_time(setup, tmp_path):
     s = runner.run_summary(preds, cfg())
     assert s["cost_usd"] == pytest.approx(0.01 * len(tasks)) and s["usd_per_1k_docs"] == pytest.approx(10)
     assert s["latency_p50_s"] is not None and s["transport_failures"] == 0
+
+
+def test_adapter_exception_is_a_failed_reply(setup, tmp_path):
+    tasks, root = setup
+    mod = tmp_path / "boom.py"
+    mod.write_text("def extract(schema, document):\n    raise ValueError('bad document')\n")
+    c = {"name": "boom", "adapter": "python", "options": {"callable": f"{mod}:extract"}}
+    preds = runner.run(tasks, root, c, tmp_path / "p.jsonl", log=lambda *a: 0)
+    assert {p["parse_status"] for p in preds} == {"error"} and all("bad document" in p["error"] for p in preds)

@@ -53,6 +53,10 @@ def run_one(task: dict, root: Path, adapter, reader: str, sleep=time.sleep) -> d
                 break
             sleep(2 * attempt)
             continue
+        except Exception as e:  # noqa: BLE001 - the system failed on this document: scored as a failed reply
+            return {"task_id": task["task_id"], "parse_status": "error", "parsed": None, "raw": None,
+                    "latency_s": round(time.perf_counter() - t0, 3), "attempts": attempt, "failures": failures,
+                    "error": f"{type(e).__name__}: {str(e)[:200]}", "cost_usd": None}
         status, parsed = parse_response(reply.raw)
         return {"task_id": task["task_id"], "parse_status": status, "parsed": parsed, "raw": reply.raw,
                 "latency_s": round(time.perf_counter() - t0, 3), "attempts": attempt, "failures": failures,
