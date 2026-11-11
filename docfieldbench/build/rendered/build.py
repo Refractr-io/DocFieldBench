@@ -67,6 +67,16 @@ def field_records(fam: str, tn: str, rec: dict, idx: TextIndex, schema: dict) ->
                            {"status": "absent", "value": None, **base, "evidence": NOT_DRAWN})
         elif idx.visible(kind, value):
             fields[ptr] = {"status": "present", "value": value, **base, "evidence": idx.evidence(kind, value)}
+            acc = []
+            region = (pointer_get(rec, ptr.rsplit("/", 1)[0]) or {}).get("region") if ptr.count("/") == 2 else None
+            if region and ptr.endswith("/city"):
+                acc.append(f"{value}, {region}")                 # the address prints "Austin, TX 78701"
+            if region and ptr.endswith("/postcode"):
+                acc.append(f"{region} {value}")
+            if kind == "amount" and value and idx.printed_negative(value):
+                acc.append(-value)                               # printed as a deduction: either sign
+            if acc:
+                fields[ptr]["accept"] = acc
         else:
             fields[ptr] = {"status": "excluded", "value": None, **base,
                            "reason": "drawn but not found in the text layer; needs a human check"}

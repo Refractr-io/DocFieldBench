@@ -58,7 +58,8 @@ def text_norm(v) -> str:
     return _strip_edge_punct(s).strip()
 
 
-_ID_LABEL = re.compile(r"^\s*(?:no|nos|nr|number|num|n°|nº)\s*[.:]?\s+(?=\S)", re.IGNORECASE)
+_ID_LABEL = re.compile(r"^\s*(?:no|nos|nr|number|num|n°|nº|rin|fr\s+doc|docket(?:\s+(?:no|number))?)\s*[.:]?\s+(?=\S)",
+                       re.IGNORECASE)
 
 
 def id_core(v) -> str:

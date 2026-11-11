@@ -170,6 +170,8 @@ def cover_gold(fragment: str, header: str):
             vals[TAGS[name]] = text
         elif name == "dei:EntityAddressAddressLine1":
             vals["/address/street"] = text
+        elif name == "dei:EntityAddressAddressLine2":
+            vals["street_line2"] = text
         elif name in ("dei:CityAreaCode", "dei:LocalPhoneNumber"):
             vals.setdefault("phone_parts", []).append(text)
         elif name in ("dei:Security12bTitle", "dei:TradingSymbol", "dei:SecurityExchangeName"):
@@ -179,6 +181,9 @@ def cover_gold(fragment: str, header: str):
     if "/period_end_date" in vals:
         d = parse_date(vals["/period_end_date"], "MDY")
         vals["/period_end_date"] = d[0] if d else None
+    line2 = vals.pop("street_line2", None)
+    if line2 and vals.get("/address/street"):
+        vals["street_accept"] = [f"{vals['/address/street']}, {line2}", f"{vals['/address/street']} {line2}"]
     parts = vals.pop("phone_parts", [])
     if len(parts) == 2:
         area = parts[0].strip("() ")
@@ -248,6 +253,8 @@ def build_cover(sec: Sec, e: dict) -> tuple[dict, bytes] | str:
             fields[ptr] = {"status": "excluded", "value": None, **base, "reason": "not tagged on the cover"}
         elif idx.visible(kind, v):
             fields[ptr] = {"status": "present", "value": v, **base, "evidence": idx.evidence(kind, v)}
+            if ptr == "/address/street" and vals.get("street_accept"):
+                fields[ptr]["accept"] = vals["street_accept"]
         else:
             fields[ptr] = {"status": "excluded", "value": None, **base,
                            "reason": "tagged but not found in the shipped text; needs a human check"}
@@ -308,6 +315,18 @@ def _num(s):
         return None
 
 
+US_STATES = dict(zip(
+    "AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA "
+    "RI SC SD TN TX UT VT VA WA WV WI WY DC".split(),
+    ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida",
+     "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine",
+     "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+     "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma",
+     "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah",
+     "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming", "District of Columbia"],
+    strict=True))
+
+
 def reorder(name: str) -> str | None:
     """'ALEXANDER PATRICK L' -> 'PATRICK L ALEXANDER' (EDGAR prints persons last name first)."""
     parts = name.split()
@@ -364,6 +383,8 @@ def build_form4(sec: Sec, e: dict) -> tuple[dict, bytes] | str:
             fields[ptr] = {"status": "present", "value": v, **base, "evidence": idx.evidence(kind, v)}
             if ptr == "/reporting_owner/name" and reorder(v):
                 fields[ptr]["accept"] = [reorder(v)]
+            if ptr == "/reporting_owner/state" and v.upper() in US_STATES:
+                fields[ptr]["accept"] = [US_STATES[v.upper()]]
         else:
             fields[ptr] = {"status": "excluded", "value": None, **base,
                            "reason": "in the XML but not found in the rendering; needs a human check"}
