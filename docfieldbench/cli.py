@@ -16,9 +16,6 @@ import json
 import sys
 from pathlib import Path
 
-from . import baselines
-from .metrics import headline, summarize
-from .outcomes import score_task
 from .responses import parse_response
 from .tasks import load_tasks, validate_task
 
@@ -50,6 +47,8 @@ def cmd_validate(a) -> int:
 
 
 def cmd_score(a) -> int:
+    from .metrics import headline, summarize  # scoring imports scipy; `run` works without it
+    from .outcomes import score_task
     tasks = load_tasks(a.tasks)
     preds = _load_predictions(a.predictions)
     scored = [score_task(t, preds.get(t["task_id"])) for t in tasks]
@@ -92,6 +91,7 @@ def cmd_score(a) -> int:
 
 
 def cmd_baseline(a) -> int:
+    from . import baselines
     with open(a.out, "w") as f:
         for t in load_tasks(a.tasks):
             f.write(json.dumps(baselines.null_all(t), ensure_ascii=False) + "\n")
