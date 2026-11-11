@@ -4,6 +4,7 @@
   docfieldbench score TASKS PREDICTIONS     score a predictions file (JSONL, one object per task)
   docfieldbench baseline TASKS --out FILE   the all-null baseline (calibrates the absence metric)
   docfieldbench run TASKS --system CFG --out FILE   send every task to one system (see run.py for the config)
+  docfieldbench data download VERSION | verify DIR   fetch and verify a release (data.py)
   docfieldbench adjudicate build|apply ...   blind review of gold against systems' answers (adjudicate.py)
   docfieldbench init DOCS --schema S --out DIR   task stubs for your own documents (byo.py)
   docfieldbench inject-absent TASKS --fields F    add provably absent fields to your tasks (byo.py)
@@ -127,6 +128,9 @@ def cmd_run(a) -> int:
 
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ["data"]:
+        from . import data
+        return data.main(argv[1:])
     if argv[:1] == ["adjudicate"]:
         from . import adjudicate
         return adjudicate.main(argv[1:])
