@@ -19,6 +19,7 @@ from pathlib import Path
 
 from .. import CANARY
 from ..absence import inject
+from ..adjudicate import _set_field
 from ..tasks import MAX_PAGES, validate_task
 from . import pdf, rule0
 from .edgar import html_text
@@ -99,7 +100,17 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--src", type=Path, nargs="+", required=True)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--adjudication", type=Path, nargs=2, metavar=("POOL", "DECISIONS"),
+                    help="apply blind-review decisions to the base tasks (variants inherit them); writes the log")
     a = ap.parse_args(argv)
+    decided = {}
+    if a.adjudication:
+        pool = {i["id"]: i for i in json.loads(a.adjudication[0].read_text())}
+        for iid, d in json.loads(a.adjudication[1].read_text()).items():
+            if iid in pool:
+                decided.setdefault(pool[iid]["task_id"], []).append((pool[iid], d))
+    log = ["# Adjudication log", "", "Changes to gold after blind review (system names hidden). Each applies to every "
+           "system, and to the scan and photo variants of the document.", ""]
     if a.out.exists():
         shutil.rmtree(a.out)
     (a.out / "tasks").mkdir(parents=True)
@@ -113,6 +124,10 @@ def main(argv=None) -> int:
             t, new = inject(t, text, SEED)
             for k in new:
                 added[(t["family"], k, t["fields"][f"/{k}"]["status"])] += 1
+            for item, d in decided.get(t["task_id"], []):
+                msg = _set_field(t["fields"][item["pointer"]], item["unit"], item["pointer"], d)
+                if msg:
+                    log.append(f"- `{t['task_id']}` `{item['unit']}`: {msg}")
             t = tag_task(t, text)
             t["canary"] = CANARY
             problems += [f"{t['task_id']}: {e}" for e in validate_task(t)]
@@ -148,6 +163,10 @@ def main(argv=None) -> int:
     if not ok:
         problems.append("Rule 0 failed")
     (a.out / "DIVERSITY.md").write_text(diversity(tasks, sizes))
+    if a.adjudication:
+        n_dec = sum(len(v) for v in decided.values())
+        log.append(f"\n{len(log) - 4} change(s) from {n_dec} decision(s) over {len(decided)} document(s).")
+        (a.out / "ADJUDICATION_LOG.md").write_text("\n".join(log) + "\n")
     files = sorted(p for p in a.out.rglob("*") if p.is_file() and p.name != "manifest.json")
     (a.out / "manifest.json").write_text(json.dumps(
         {"canary": CANARY, "files": {str(p.relative_to(a.out)): sha256(p) for p in files}}, indent=1) + "\n")
