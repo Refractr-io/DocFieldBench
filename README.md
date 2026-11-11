@@ -39,7 +39,7 @@ line items, values that need normalising), with 95% confidence intervals from a 
 |---|---|---|
 | Business (100) | invoices, receipts, bank and account statements, delivery notes, payslips | embedded e-invoice XML, hand labels, rendering records |
 | Records (100) | court opinions, Federal Register rules, SEC cover pages and Form 4s | the documents' own markup and official metadata |
-| Forms (60) | US government forms, scanned and filled | dataset labels, programmatic form fills |
+| Forms (60) | US government forms: page images and filled PDFs | dataset labels, programmatic form fills |
 
 Single-page PDFs also come as a scan or photo with the same gold; those are reported by condition, not in the score.
 

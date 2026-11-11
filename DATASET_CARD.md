@@ -9,7 +9,7 @@
 |---|---|---|
 | Business | 100 | invoices (55), receipts, bank and account statements, delivery notes, payslips |
 | Records | 100 | court opinions (48), Federal Register rules (27), SEC 10-Q/10-K cover pages (19) and Form 4s (6) |
-| Forms | 60 | US government forms: 40 scanned forms from VAREX, 20 filled IRS forms |
+| Forms | 60 | US government forms: 40 filled-form images from VAREX (rendered pages, no text layer), 20 filled IRS PDFs |
 
 About one scored field in seven is absent from its document by design (Business 18%, Forms 14%, Records 9%).
 Languages: English 207, German 30, Spanish 9, Dutch 9, French 5. Formats: PDF 141, plain text 48, PNG 40, HTML 31.
