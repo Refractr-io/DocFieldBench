@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from docfieldbench import baselines
-from docfieldbench.metrics import bootstrap_ci, doc_counts, paired_bootstrap, summarize
+from docfieldbench.metrics import bootstrap_ci, doc_counts, headline, paired_bootstrap, summarize
 from docfieldbench.outcomes import score_task
 from docfieldbench.tasks import gold_instance, load_tasks, validate_task
 
@@ -206,3 +206,42 @@ def test_scoring_does_not_mutate_inputs(tasks):
     g["line_items"][0]["quantity"] = 99
     score_task(t, pred(g))
     assert t == before
+
+
+def test_headline_score(tasks):
+    gold = [score_task(t, pred(gold_instance(t))) for t in tasks.values()]
+    h = headline(gold, n_boot=200)
+    assert h["score"] == 1.0 and h["lo"] == 1.0 and set(h["tracks"]) == {t["track"] for t in tasks.values()}
+    nulls = [score_task(t, baselines.null_all(t)) for t in tasks.values()]
+    hn = headline(nulls, n_boot=200)
+    for s in nulls:                                  # the all-null baseline earns exactly the absent share
+        c = doc_counts(s)
+        assert c["score_points"] == c["absent"]
+    assert 0 < hn["score"] < 1
+    failed = [score_task(t, None) for t in tasks.values()]
+    assert headline(failed, n_boot=200)["score"] == 0.0
+
+
+def test_silent_error_costs_a_point(tasks):
+    t = tasks["fixture-invoice-1"]
+    g = gold_instance(t)
+    g["seller"]["postcode"] = "EC1A 1BB"            # one fabricated value
+    c = doc_counts(score_task(t, pred(g)))
+    assert c["score_points"] == c["correct"] + c["abstained"] - 1
+    g2 = gold_instance(t)
+    g2["seller"]["postcode"] = None                  # the same field left empty instead: a right abstention
+    c2 = doc_counts(score_task(t, pred(g2)))
+    assert c2["score_points"] == c["score_points"] + 2
+
+
+def test_headline_weighs_tracks_equally(tasks):
+    by_track = {}
+    for t in tasks.values():
+        by_track.setdefault(t["track"], t)
+    if len(by_track) < 2:
+        pytest.skip("fixtures hold one track")
+    a, b = list(by_track.values())[:2]
+    good, bad = score_task(a, pred(gold_instance(a))), score_task(b, None)
+    h1 = headline([good, bad], n_boot=100)
+    h3 = headline([good, good, good, bad], n_boot=100)
+    assert h1["score"] == h3["score"] == 0.5

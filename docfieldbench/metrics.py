@@ -2,6 +2,15 @@
 
 Every rate weighs each document the same (document-macro, the headline) and is also given field-micro. CIs resample
 documents, because errors cluster inside documents: a system that fails a document fails many of its fields.
+
+The headline, the DocFieldBench score (`headline`), folds precision, recall and abstention into one number:
+  per document   max(0, correct + abstained - SILENT_PENALTY * silent errors) / (present + absent fields)
+  per track      the mean over its documents
+  score          the mean over the tracks (each track weighs the same, whatever its size)
+A right value or a right empty field earns a point; an omitted present field earns none; a silent error (wrong,
+swapped, fabricated or extra value) costs a point. With SILENT_PENALTY = 1, answering pays only when the system is
+more likely right than wrong, so neither answering everything nor answering nothing scores well (the all-null
+baseline scores the share of absent fields). A failed response scores 0.
 """
 from __future__ import annotations
 
@@ -9,6 +18,7 @@ from collections.abc import Callable
 
 import numpy as np
 
+SILENT_PENALTY = 1.0
 OUTCOMES = ("correct", "swapped", "wrong", "omitted", "abstained", "fabricated", "extra", "failed")
 
 # metric: (numerator, denominator) over per-document counts
@@ -23,6 +33,7 @@ RATES = {
     "exact_docs": ("exact", "one"),
     "conformance": ("conformant", "one"),
     "fenced": ("fenced", "one"),
+    "field_score": ("score_points", "scored"),
 }
 
 
@@ -37,6 +48,8 @@ def doc_counts(scored: dict, unit_filter: Callable[[dict], bool] | None = None) 
     c["answers"] = c["correct"] + c["swapped"] + c["wrong"] + c["fabricated"] + c["extra"]
     c["silent"] = c["swapped"] + c["wrong"] + c["fabricated"] + c["extra"]
     c["partial"] = sum(bool(u.get("partial")) for u in units)
+    c["scored"] = c["present"] + c["absent"]
+    c["score_points"] = max(0.0, c["correct"] + c["abstained"] - SILENT_PENALTY * c["silent"])
     d = scored["doc"]
     failed = d["failed"]
     c["one"] = 1 if units else 0
@@ -110,6 +123,26 @@ def summarize(scored_tasks: list[dict], unit_filter=None, n_boot: int = 10_000, 
     out["f1"] = {"macro": (2 * p * r / (p + r)) if p and r else None}
     out["counts"] = {o: int(sum(c[o] for c in counts)) for o in (*OUTCOMES, "present", "absent", "answers")}
     return out
+
+
+def headline(scored_tasks: list[dict], n_boot: int = 10_000, seed: int = 0, alpha: float = 0.05) -> dict:
+    """The DocFieldBench score (module docstring): the mean over tracks of the document-macro field score, with a
+    percentile CI from a bootstrap that resamples documents within each track."""
+    by_track: dict[str, list[float]] = {}
+    for s in scored_tasks:
+        c = doc_counts(s)
+        if c["scored"] > 0:
+            by_track.setdefault(s.get("track") or "all", []).append(c["score_points"] / c["scored"])
+    if not by_track:
+        return {"score": None, "lo": None, "hi": None, "tracks": {}, "n_docs": 0}
+    names = sorted(by_track)
+    arrs = [np.asarray(by_track[t]) for t in names]
+    point = float(np.mean([a.mean() for a in arrs]))
+    rng = np.random.default_rng(seed)
+    boots = np.mean([a[rng.integers(0, len(a), size=(n_boot, len(a)))].mean(axis=1) for a in arrs], axis=0)
+    return {"score": point, "lo": float(np.quantile(boots, alpha / 2)), "hi": float(np.quantile(boots, 1 - alpha / 2)),
+            "tracks": {t: float(a.mean()) for t, a in zip(names, arrs, strict=True)},
+            "n_docs": int(sum(len(a) for a in arrs)), "silent_penalty": SILENT_PENALTY}
 
 
 def selective_prediction(answers: list[tuple[bool, float | None]], targets=(0.01, 0.02, 0.05)) -> dict:

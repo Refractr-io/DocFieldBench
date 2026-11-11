@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 from . import baselines
-from .metrics import summarize
+from .metrics import headline, summarize
 from .outcomes import score_task
 from .responses import parse_response
 from .tasks import load_tasks, validate_task
@@ -54,13 +54,18 @@ def cmd_score(a) -> int:
     groups = {"all": scored}
     for s in scored:
         groups.setdefault(f"track={s['track']}", []).append(s)
-    print(f"{'group':22} {'docs':>5} {'prec':>6} {'recall':>6} {'abst':>6} {'silent':>6} {'swap':>6} "
+    h = headline(scored, n_boot=a.n_boot)
+    if h["score"] is not None:
+        tracks = ", ".join(f"{t} {100 * v:.1f}" for t, v in h["tracks"].items())
+        print(f"DocFieldBench score: {100 * h['score']:.1f}  (95% CI {100 * h['lo']:.1f}-{100 * h['hi']:.1f}; {tracks})\n")
+    print(f"{'group':22} {'docs':>5} {'score':>6} {'prec':>6} {'recall':>6} {'abst':>6} {'silent':>6} {'swap':>6} "
           f"{'exact':>6} {'conf':>6}")
-    summary = {}
+    summary = {"score": h}
     for name, ss in groups.items():
         m = summarize(ss, n_boot=a.n_boot)
         summary[name] = m
-        print(f"{name:22} {len(ss):5d} {_fmt(m['precision']['macro'])}  {_fmt(m['recall']['macro'])}  "
+        print(f"{name:22} {len(ss):5d} {_fmt(m['field_score']['macro'])}  {_fmt(m['precision']['macro'])}  "
+              f"{_fmt(m['recall']['macro'])}  "
               f"{_fmt(m['abstention']['macro'])}  {_fmt(m['silent_error_rate']['macro'])}  "
               f"{_fmt(m['swap_rate']['macro'])}  {_fmt(m['exact_docs']['macro'])}  {_fmt(m['conformance']['macro'])}")
     if a.out:

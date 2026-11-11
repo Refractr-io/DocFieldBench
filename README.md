@@ -10,7 +10,16 @@ long it all takes. Run it on the included documents, or on your own.
 ## What it measures
 Every task is a document (PDF, image or HTML, up to 10 pages) with a JSON schema and a gold answer for every field.
 Systems get the original file: reading it, through a text layer, OCR or vision, is part of the test. DocFieldBench
-scores each field deterministically, with no LLM judge:
+scores each field deterministically, with no LLM judge.
+
+**The DocFieldBench score** (0-100) is the one number to compare systems by. Every field of a document earns a point
+when it comes back right, including a field correctly left empty; an omitted value earns nothing; a silent error (a
+wrong, swapped or invented value) costs a point. A document scores its points over its fields (never below 0), a
+track the mean over its documents, and the score is the mean over the three tracks, which weigh the same. Answering
+only pays when a system is more likely right than wrong, so answering everything and answering nothing both score
+low: the all-null baseline scores the share of absent fields. The 95% CI comes from a bootstrap over documents within
+each track. The metrics below explain the score:
+
 
 - **Precision:** of the values a system returns, how many are right. One minus precision is the *silent error rate*:
   wrong, swapped or invented values that a pipeline would store without noticing.
