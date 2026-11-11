@@ -54,3 +54,4 @@ testpaths = ["tests"]
 # word lists, printed labels and HTML templates: long string literals read better unwrapped
 "docfieldbench/build/rendered/{labels,vocab,templates,records}.py" = ["E501"]
 "docfieldbench/build/formfill.py" = ["E501"]   # the per-form field maps
+"docfieldbench/adjudicate.py" = ["E501"]       # the review page is embedded HTML and JavaScript

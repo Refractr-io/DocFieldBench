@@ -4,6 +4,7 @@
   docfieldbench score TASKS PREDICTIONS     score a predictions file (JSONL, one object per task)
   docfieldbench baseline TASKS --out FILE   the all-null baseline (calibrates the absence metric)
   docfieldbench run TASKS --system CFG --out FILE   send every task to one system (see run.py for the config)
+  docfieldbench adjudicate build|apply ...   blind review of gold against systems' answers (adjudicate.py)
 
 A predictions line is {"task_id", "parse_status", "parsed"} or {"task_id", "raw"} (parsed here). A task without a
 line scores as a failed response.
@@ -123,6 +124,10 @@ def cmd_run(a) -> int:
 
 
 def main(argv=None) -> int:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ["adjudicate"]:
+        from . import adjudicate
+        return adjudicate.main(argv[1:])
     ap = argparse.ArgumentParser(prog="docfieldbench", description=__doc__.split("\n\n")[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     v = sub.add_parser("validate")
