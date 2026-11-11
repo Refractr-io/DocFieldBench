@@ -101,3 +101,11 @@ def test_python_adapter(setup, tmp_path):
     c = {"name": "py", "adapter": "python", "options": {"callable": f"{mod}:extract"}}
     preds = runner.run(tasks, root, c, tmp_path / "p.jsonl", log=lambda *a: 0)
     assert {p["parse_status"] for p in preds} == {"ok"}
+
+
+def test_run_summary_measures_spend_and_time(setup, tmp_path):
+    tasks, root = setup
+    preds = runner.run(tasks, root, cfg(), tmp_path / "p.jsonl", transport=answering(tasks, []), log=lambda *a: 0)
+    s = runner.run_summary(preds, cfg())
+    assert s["cost_usd"] == pytest.approx(0.01 * len(tasks)) and s["usd_per_1k_docs"] == pytest.approx(10)
+    assert s["latency_p50_s"] is not None and s["transport_failures"] == 0

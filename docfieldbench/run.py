@@ -107,6 +107,30 @@ def run(tasks: list[dict], root: Path, cfg: dict, out: Path, *, resume=False, co
     return [done[t["task_id"]] for t in tasks if t["task_id"] in done]
 
 
+def _pct(xs, q):
+    xs = sorted(xs)
+    return round(xs[min(len(xs) - 1, int(q * len(xs)))], 3) if xs else None
+
+
+def run_summary(preds: list[dict], cfg: dict) -> dict:
+    """Spend and time, measured the same way for every system. Local systems report no cost; add your hardware's
+    price per hour in the config (`usd_per_hour`) to get one from the wall time."""
+    lat = [p["latency_s"] for p in preds if p.get("latency_s") is not None]
+    costs = [p.get("cost_usd") for p in preds]
+    cost = sum(c or 0 for c in costs)
+    if cfg.get("usd_per_hour") and not any(costs):
+        cost = sum(lat) / 3600 * cfg["usd_per_hour"]
+    n = len(preds)
+    return {"system": cfg["name"], "tasks": n, "cost_usd": round(cost, 4),
+            "usd_per_1k_docs": round(cost / n * 1000, 3) if n else None,
+            "latency_p50_s": _pct(lat, 0.5), "latency_p90_s": _pct(lat, 0.9), "latency_mean_s":
+            round(sum(lat) / len(lat), 3) if lat else None,
+            "transport_failures": sum(p["parse_status"] == "transport" for p in preds),
+            "retried": sum(len(p.get("failures") or []) > 0 for p in preds),
+            "reader": cfg.get("reader", "native"), "prompt": PROMPT_ID, "harness": __version__,
+            "hardware": cfg.get("hardware")}
+
+
 def pilot(tasks: list[dict], root: Path, n: int) -> list[dict]:
     return sorted(tasks, key=lambda t: task_size(t, root), reverse=True)[:n]
 

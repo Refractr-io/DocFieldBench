@@ -4,11 +4,14 @@ the system under test and is named in every result label.
   native         the file as it is (PDF, image, HTML or text). For systems that read files themselves.
   pages_png      PDF pages rasterised to PNG (150 dpi), for vision models that take images but not PDF.
   text           text only, for text models: plain text and HTML as they are, a PDF's text layer, and OCR for
-                 images and PDFs without a text layer (needs the `ocr` extra).
+                 images and PDFs without a text layer: Tesseract 5 with its default settings (the `tesseract` binary
+                 and its eng, deu, fra, nld and spa language data must be installed).
 """
 from __future__ import annotations
 
 import io
+import shutil
+import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -48,19 +51,24 @@ def _pdf_pages_png(data: bytes, dpi: int = 150) -> list[bytes]:
     return out
 
 
-_OCR = None
+OCR_LANGS = "eng+deu+fra+nld+spa"
 
 
 def _ocr_image(data: bytes) -> str:
-    global _OCR
-    try:
-        from rapidocr_onnxruntime import RapidOCR
-    except ImportError as e:  # pragma: no cover - optional extra
-        raise RuntimeError("the text reader needs OCR for this document: pip install 'docfieldbench[ocr]'") from e
-    if _OCR is None:
-        _OCR = RapidOCR()
-    result, _ = _OCR(data)
-    return "\n".join(r[1] for r in result or [])
+    """Tesseract with default settings (LSTM engine, automatic page segmentation), the image on stdin."""
+    exe = shutil.which("tesseract")
+    if exe is None:
+        raise RuntimeError("the text reader needs Tesseract for this document: install tesseract-ocr")
+    r = subprocess.run([exe, "stdin", "stdout", "-l", OCR_LANGS], input=data, capture_output=True, check=True)
+    return r.stdout.decode("utf-8", errors="replace")
+
+
+def ocr_version() -> str | None:
+    exe = shutil.which("tesseract")
+    if exe is None:
+        return None
+    r = subprocess.run([exe, "--version"], capture_output=True, text=True)
+    return (r.stdout or r.stderr).splitlines()[0].strip()
 
 
 def read(path: Path, media_type: str, reader: str) -> Document:

@@ -99,8 +99,13 @@ def cmd_run(a) -> int:
     if a.pilot:
         tasks = runner.pilot(tasks, root, a.pilot)
     preds = runner.run(tasks, root, cfg, Path(a.out), resume=a.resume, concurrency=a.concurrency, budget=a.budget)
-    spent = sum(p.get("cost_usd") or 0 for p in preds)
-    print(f"{len(preds)} replies, ${spent:.4f}")
+    summ = runner.run_summary(preds, cfg)
+    if cfg.get("reader") == "text":
+        from .readers import ocr_version
+        summ["ocr"] = ocr_version()
+    Path(str(a.out) + ".run.json").write_text(json.dumps(summ, indent=1) + "\n")
+    print(f"{summ['tasks']} replies, ${summ['cost_usd']:.4f} (${summ['usd_per_1k_docs']}/1k docs), "
+          f"latency p50 {summ['latency_p50_s']} s / p90 {summ['latency_p90_s']} s")
     if a.pilot:
         print("projection for all", n_total, "tasks:", json.dumps(runner.projection(preds, n_total)))
     return 0
