@@ -176,8 +176,8 @@ _MONTH_WORDS = {
     12: "december dec dezember dez decembre décembre diciembre dic",
 }
 MONTHS = {w: m for m, words in _MONTH_WORDS.items() for w in words.split()}
-_WEEKDAY = re.compile(r"^(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|"
-                      r"vrijdag|zaterdag|zondag|montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|lunes|martes|"
+_WEEKDAY = re.compile(r"^(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|"
+                      r"donderdag|vrijdag|zaterdag|zondag|montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|lunes|martes|"
                       r"mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|"
                       r"mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)\.?,?\s+", re.I)
 _ISO = re.compile(r"^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$")
