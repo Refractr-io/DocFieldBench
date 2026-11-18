@@ -11,6 +11,7 @@ __pycache__/
 results/
 !results/baselines/
 data/*/docs/
+!data/v1.0.0/docs/
 data/*/reps/
 .cache/
 

@@ -245,3 +245,11 @@ def test_headline_weighs_tracks_equally(tasks):
     h1 = headline([good, bad], n_boot=100)
     h3 = headline([good, good, good, bad], n_boot=100)
     assert h1["score"] == h3["score"] == 0.5
+
+
+def test_item_accept_alternative_for_a_row_value():
+    from docfieldbench.outcomes import _item_accept
+    rec = {"item_accept": [{"field": "exchange", "gold": "Nasdaq", "value": "The Nasdaq Stock Market LLC"}]}
+    assert _item_accept(rec, "exchange", "Nasdaq") == ["The Nasdaq Stock Market LLC"]
+    assert _item_accept(rec, "exchange", "NYSE") == []
+    assert _item_accept(rec, "name", "Nasdaq") == []

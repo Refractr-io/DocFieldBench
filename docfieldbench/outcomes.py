@@ -80,10 +80,11 @@ def _as_list(pred) -> list:
 
 
 def _item_accept(rec: dict, f: str, g) -> list:
-    """Alternatives for one row value: the negated amount when the document prints it negative."""
+    """Alternatives for one row value: the negated amount when the document prints it negative, and the
+    adjudicated alternatives for this field and gold value (`item_accept`)."""
     if f in (rec.get("item_sign_either") or []) and isinstance(g, (int, float)) and not isinstance(g, bool) and g:
         return [-g]
-    return []
+    return [x["value"] for x in rec.get("item_accept") or [] if x["field"] == f and x["gold"] == g]
 
 
 def _align(gold_rows, pred_rows, item_match, locale, rec):

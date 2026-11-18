@@ -4,8 +4,8 @@ An open benchmark for structured extraction from documents. It measures what cos
 values that are wrong or invented, fields that should have stayed empty, responses that break the schema, and how
 long it all takes. Run it on the included documents, or on your own.
 
-> **Status: release candidate.** The dataset (260 documents) is built and in blind adjudication; v1.0.0 follows when
-> the adjudication log is published. Nothing here is a result yet.
+> **Status: v1.0.0.** The dataset (260 documents, 346 tasks with the scan and photo variants) is adjudicated; the
+> changes are in the release's `ADJUDICATION_LOG.md`.
 
 ## What it measures
 Every task is a document (PDF, image or HTML, up to 10 pages) with a JSON schema and a gold answer for every field.
@@ -45,10 +45,13 @@ Single-page PDFs also come as a scan or photo with the same gold; those are repo
 
 No gold value comes from a model.
 
+Benchmark page: <https://refractr.io/docfieldbench>.
+
 ## Quickstart
 ```bash
-pip install --pre docfieldbench
-docfieldbench data download v1.0.0 --url RELEASE_URL           # or --from-file; every file is checked
+# from a clone of this repository: the documents and gold are in data/v1.0.0
+pip install -e .
+docfieldbench data verify data/v1.0.0                             # every file is checked against the manifest
 docfieldbench run data/v1.0.0/tasks --system my_system.json --out preds.jsonl
 docfieldbench score data/v1.0.0/tasks preds.jsonl --summary summary.json
 docfieldbench baseline data/v1.0.0/tasks --out all_null.jsonl   # the all-null baseline, for comparison

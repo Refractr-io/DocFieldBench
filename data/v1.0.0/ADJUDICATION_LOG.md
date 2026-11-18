@@ -1,0 +1,73 @@
+# Adjudication log
+
+Changes to gold after blind review (system names hidden). Each applies to every system, and to the scan and photo variants of the document.
+
+- `cap-cal-app-4th-174-0034-01` `/appellee`: also accepted: "MAUREEN STANCIU, as Administrator, etc."
+- `cap-cal-app-4th-193-0885-01` `/appellee`: also accepted: "ARDNT PELTNER, as Executor, etc."
+- `cap-cal-app-4th-219-0809-01` `/appellant`: also accepted: "Jaimie Haver and Westover Capital Corporation"
+- `cap-ill-app-3d-373-0811-01` `/appellee`: also accepted: "People of the State of Illinois"
+- `cap-ill-app-3d-386-0860-01` `/decision_date`: excluded: Two candidate dates, neither labelled as the decision date: 'Rule 23 order filed November 13, 2008' and 'Motion to publish granted December 9, 2008'.
+- `cap-ill-app-3d-388-0104-01` `/appellee`: also accepted: "People of the State of Illinois"
+- `cap-ill-app-3d-388-1017-01` `/appellee`: also accepted: "Richard J. Martis"
+- `fedreg-2026-08364` `/docket_number`: also accepted: "EPA–R03–OAR–2019–0295; EPA–R03–OAR–2025–0267"
+- `fedreg-2026-15018` `/docket_number`: also accepted: "NOAA-NMFS-2025-0537"
+- `fedreg-2026-20202` `/docket_number`: also accepted: "FAA–2026–8948; Airspace Docket No. 26–ASO–16"
+- `invoice2data-saeco` `/seller/name`: also accepted: "e-Luscious Nederland B.V. iov Saeco.com"
+- `varex-92437` `/project_name`: also accepted: "Sunny Meadows Apartment Complex"
+- `varex-FDA-3677v_508` `/form_volume`: also accepted: "1"
+- `varex-GSA3440-18` `/rating_period_from`: also accepted: "2023-03-01"
+- `varex-GSA3440-18` `/rating_period_to`: also accepted: "2024-02-28"
+- `varex-GSA_2429` `/organization_name`: also accepted: "Hunt PLC"
+- `varex-HUD-1724` `/description`: excluded: The filled value 'Secur' sits in the unlabelled blank before '% Ginnie Mae I Mortgage-Backed Securities' (an interest-rate blank); nothing on the page is labelled 'description', so the field cannot be mapped from the document.
+- `varex-HUD-1724` `/first_interest_payment_due`: gold fixed: "07/01/2023" -> null
+- `varex-ri20-120` `/claim_number`: also accepted: "CSA REF-2020-435"
+- `varex-ssa-640` `/revision_date`: excluded: The form header prints 'Form SSA-640 (11-2018)', the form's edition/revision date; whether the injected-absent 'revision_date' means this is undecidable.
+- `zugferd-1p0-basic-rechnungskorrektur` `/amount_due`: excluded: The credit note prints only 'Endbetrag -8,79' and no amount-due label; sibling ZUGFeRD tasks (kostenrechnung, mustang) treat the same final total as amount_due, so null and -8.79 are both defensible.
+- `zugferd-1p0-comfort-haftpflichtversicherung-vers` `/delivery_date`: excluded: The document gives only a cover period with two dates and no delivery date; nothing chooses between start and end.
+- `zugferd-1p0-comfort-haftpflichtversicherung-vers` `/seller/name`: also accepted: "MVM Musterhafter Versicherungsverein Musterstadt a.G."
+- `zugferd-1p0-comfort-kraftfahrversicherung-brutto` `/prepaid_amount`: excluded: The document prints no prepaid amount: 'Ausstehende Forderung am Ausstellungstag 220,00 €' is an outstanding receivable added to the amount due (220 + 220 = 440); the XML encodes it as prepaid -220. Null, 220 and -220 are all defensible.
+- `zugferd-1p0-comfort-kraftfahrversicherung-brutto` `/seller/name`: also accepted: "MVM Musterhafter Versicherungsverein Musterstadt a.G."
+- `zugferd-1p0-extended-kostenrechnung` `/delivery_date`: also accepted: "2013-09-01"
+- `zugferd-1p0-extended-kostenrechnung` `/seller/name`: also accepted: "KOSTENLIEFERANT GMBH"
+- `zugferd-2p0-en16931-haftpflichtversicherung-vers` `/seller/name`: also accepted: "MVM Musterhafter Versicherungsverein Musterstadt a.G."
+- `zugferd-2p0-extended-fremdwaehrung` `/buyer/street`: also accepted: "Pappelallee 15, Hof 3"
+- `zugferd-2p1-basic-wl-einfach` `/due_date`: excluded: Two conflicting due dates in the document: the 'Fälligkeit' column says 13.12.2017 (before the 13.11.2019 invoice date) while the payment terms say 'Zahlbar innerhalb 30 Tagen netto bis 04.04.2020'.
+- `zugferd-avoir-fr-type381-basic` `/line_items/0/unit_price`: row 0 unit_price: also accepted: 4.55
+- `zugferd-en16931-innergemeinschaftliche-lieferungen` `/buyer/street`: also accepted: "Pappelallee 15 Hof 3"
+- `zugferd-en16931-oepnv` `/customer_number`: gold fixed: "Liselotte Müllermann" -> "35040727"
+- `zugferd-en16931-physiotherapeut` `/line_items/0/description`: row 0 description: also accepted: "Physiotherapie\nBehandlungen aufgrund der Verordnung von Frau Dr. Heilerin vom 05.09.2018 an folgenden Terminen: 11.09.2018; 14.09.2018; 19.09.2018; 24.09.2018; 27.09.2018; 11.10.2018; 15.10.2018; 17.10.2018; 22.10.2018; 30.10.2018"
+- `zugferd-en16931-physiotherapeut` `/line_items/1/description`: row 1 description: also accepted: "Hausbesuch\nAn folgenden Terminen: 11.09.2018; 14.09.2018; 19.09.2018; 24.09.2018; 27.09.2018; 11.10.2018; 15.10.2018; 17.10.2018; 22.10.2018; 30.10.2018"
+- `zugferd-en16931-sachversicherung-berechneter-steuersatz` `/seller/name`: gold fixed: "Versicherungsverein Musterstadt a.G." -> "MVM Musterhafter Versicherungsverein Musterstadt a.G."
+- `zugferd-mustanggnuaccountingbeispielre-20140703-502` `/delivery_date`: gold fixed: "2014-07-03" -> null
+- `zugferd-mustanggnuaccountingbeispielre-20140703-502` `/line_items/0/description`: row 0 description: also accepted: "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung"
+- `zugferd-mustanggnuaccountingbeispielre-20140703-502` `/line_items/1/description`: row 1 description: also accepted: "Luftballon: Bunt, ca. 500ml"
+- `zugferd-mustanggnuaccountingbeispielre-20151008-504` `/line_items/1/description`: row 1 description: also accepted: "Luftballon: Bunt, ca. 500ml"
+- `zugferd-mustanggnuaccountingbeispielre-20201121-508` `/line_items/0/description`: row 0 description: also accepted: "Design (hours): Of a sample invoice"
+- `zugferd-mustanggnuaccountingbeispielre-20201121-508` `/line_items/1/description`: row 1 description: also accepted: "Ballons: various colors, ~2000ml"
+- `edgar-10q-1134115` `/state_of_incorporation`: also accepted: "British Columbia, Canada"
+- `edgar-10q-1628171` `/securities/0/exchange`: row 0 exchange: also accepted: "The Nasdaq Stock Market LLC (Nasdaq Global Select Market)"
+- `edgar-10q-1628171` `/securities/1/exchange`: row 1 exchange: also accepted: "The Nasdaq Stock Market LLC (Nasdaq Global Select Market)"
+- `edgar-10q-1761325` `/address/street`: also accepted: "290 Harbor Drive, 4th Floor"
+- `edgar-10q-1854963` `/securities/0/exchange`: row 0 exchange: also accepted: "The Nasdaq Stock Market LLC"
+- `edgar-10q-1854963` `/securities/1/exchange`: row 1 exchange: also accepted: "The Nasdaq Stock Market LLC"
+- `edgar-10q-1958140` `/securities/0/exchange`: row 0 exchange: also accepted: "The Nasdaq Stock Market LLC"
+- `edgar-10q-1958140` `/securities/1/exchange`: row 1 exchange: also accepted: "The Nasdaq Stock Market LLC"
+- `edgar-form4-0001628280-26-072371` `/reporting_owner/street`: also accepted: "C/O ARVINAS, INC. 5 SCIENCE PARK, 395 WINCHESTER AVE."
+- `edgar-form4-0001853089-26-000014` `/reporting_owner/street`: also accepted: "C/O SI-BONE, INC 88 W PLUMERIA DRIVE"
+- `edgar-form4-0001924581-26-000009` `/reporting_owner/street`: also accepted: "C/O REDDIT, INC. 303 2ND STREET, SOUTH TOWER, 5TH FLOOR"
+- `edgar-form4-0002062367-26-000013` `/reporting_owner/street`: also accepted: "C/O AGNT, INC., 2219 RIMLAND DRIVE, SUITE 301"
+- `edgar-form4-0002085143-26-000010` `/reporting_owner/street`: also accepted: "29222 RANCHO VIEJO RD, STE 127"
+- `fedreg-2026-22285` `/publication_date`: gold fixed: "2026-11-02" -> null
+- `fedreg-2026-22484` `/publication_date`: excluded: The HTML text does not print a publication date: only 'This rule is effective November 4, 2026' and '[FR Doc. 2026-22484 Filed 11-3-26; 8:45 am]'. Gold comes from metadata and its evidence quotes the effective date.
+- `fedreg-2026-22590` `/publication_date`: gold fixed: "2026-11-05" -> null
+- `fedreg-2026-22592` `/docket_number`: excluded: The document states two different docket numbers: heading '[EPA-R03-OAR-2026-1024; FRL-12072-01-R3]' and ADDRESSES 'Docket ID No. EPA-R03-OAR-2025-0304'.
+- `fedreg-2026-22809` `/effective_date`: excluded: DATES says the NPRM is withdrawn 'as of November 9, 2026', which can be read as the effective date of the withdrawal or as no effective date at all.
+- `fedreg-2026-22809` `/publication_date`: gold fixed: "2026-11-09" -> null
+- `rendered-invoice-band-00` `/prepaid_amount`: also accepted: -2078.82
+- `rendered-receipt-thermal-00` `/line_items/1/quantity`: not applied (accept on a row or list cell needs a human edit)
+- `rendered-receipt-thermal-00` `/line_items/1/unit_price`: not applied (accept on a row or list cell needs a human edit)
+- `rendered-receipt-thermal-03` `/line_items/0/unit_price`: not applied (accept on a row or list cell needs a human edit)
+- `rendered-receipt-thermal-03` `/line_items/1/unit_price`: not applied (accept on a row or list cell needs a human edit)
+- `rendered-receipt-thermal-03` `/line_items/2/unit_price`: not applied (accept on a row or list cell needs a human edit)
+
+67 change(s) from 309 decision(s) over 143 document(s).

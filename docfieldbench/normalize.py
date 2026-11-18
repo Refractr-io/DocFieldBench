@@ -176,6 +176,10 @@ _MONTH_WORDS = {
     12: "december dec dezember dez decembre décembre diciembre dic",
 }
 MONTHS = {w: m for m, words in _MONTH_WORDS.items() for w in words.split()}
+_WEEKDAY = re.compile(r"^(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|"
+                      r"vrijdag|zaterdag|zondag|montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag|lunes|martes|"
+                      r"mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|"
+                      r"mon|tue|tues|wed|thu|thur|thurs|fri|sat|sun)\.?,?\s+", re.I)
 _ISO = re.compile(r"^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$")
 _ISO_DT = re.compile(r"^(\d{4})-(\d{2})-(\d{2})[T ]\d{2}:\d{2}")
 
@@ -220,6 +224,14 @@ def parse_date(v, order: str | None = None) -> tuple[str, bool] | None:
         y, mo, d = (int(x) if x else None for x in m.groups())
         iso = _valid(y, mo, d)
         return (iso, True) if iso else None
+    s = re.sub(r"[\u2010-\u2015\u2212]", "-", s)                # typographic dashes
+    s = _WEEKDAY.sub("", s)                                     # 'Monday, September 28, 2026'
+    s = re.sub(r"^(\d{1,2}[./-]\d{1,2}[./-]\d{2,4})[ T]+\d{1,2}:\d{2}(:\d{2})?$", r"\1", s)   # '30.09.2026 12:33'
+    m = _ISO.match(s)
+    if m:
+        y, mo, d = (int(x) if x else None for x in m.groups())
+        iso = _valid(y, mo, d)
+        return (iso, False) if iso else None
     m = _ISO_DT.match(s)
     if m:
         iso = _valid(*(int(x) for x in m.groups()))

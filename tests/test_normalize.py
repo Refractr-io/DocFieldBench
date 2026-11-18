@@ -48,6 +48,9 @@ def test_parse_number(raw, hint, want):
     ("1er janvier 2025", None, ("2025-01-01", False)),
     ("maart 2024", None, ("2024-03", False)),
     ("not a date", None, None),
+    ("30.09.2026 12:33", None, ("2026-09-30", False)),
+    ("Monday, September 28, 2026", None, ("2026-09-28", False)),
+    ("2026\u20132009\u201321".replace("2009", "09"), None, ("2026-09-21", False)),
 ])
 def test_parse_date(raw, order, want):
     assert parse_date(raw, order) == want

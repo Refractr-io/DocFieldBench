@@ -96,6 +96,9 @@ def _set_field(rec: dict, unit: str, pointer: str, d: dict) -> str:
         if d["decision"] == "fix":
             rows[int(parts[0])][parts[1]] = d["value"]
             return f"row {parts[0]} {parts[1]}: {json.dumps(old, ensure_ascii=False)} -> {json.dumps(d['value'], ensure_ascii=False)}"
+        if d["decision"] == "accept" and d["value"] is not None and old is not None:
+            rec.setdefault("item_accept", []).append({"field": parts[1], "gold": old, "value": d["value"]})
+            return f"row {parts[0]} {parts[1]}: also accepted: {json.dumps(d['value'], ensure_ascii=False)}"
     if len(parts) == 1 and parts[0].isdigit() and int(parts[0]) < len(rows) and d["decision"] == "fix":
         old = rows[int(parts[0])]
         rows[int(parts[0])] = d["value"]

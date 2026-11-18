@@ -1,0 +1,190 @@
+{
+ "source": "sec-edgar",
+ "days": [
+  "20261102",
+  "20261103",
+  "20261104",
+  "20261105",
+  "20261106",
+  "20261109",
+  "20261110"
+ ],
+ "seed": 20261111,
+ "documents": [
+  {
+   "task_id": "edgar-10q-1500412",
+   "url": "https://www.sec.gov/Archives/edgar/data/1500412/000119312526455152/ambq-20260930.htm",
+   "accession": "0001193125-26-455152",
+   "form": "10-Q",
+   "filed": "2026-11-10"
+  },
+  {
+   "task_id": "edgar-10q-1369290",
+   "url": "https://www.sec.gov/Archives/edgar/data/1369290/000119312526453623/myo-20260930.htm",
+   "accession": "0001193125-26-453623",
+   "form": "10-Q",
+   "filed": "2026-11-09"
+  },
+  {
+   "task_id": "edgar-10q-1761325",
+   "url": "https://www.sec.gov/Archives/edgar/data/1761325/000176132526000010/gxlm-20260930.htm",
+   "accession": "0001761325-26-000010",
+   "form": "10-Q",
+   "filed": "2026-11-10"
+  },
+  {
+   "task_id": "edgar-10q-1423869",
+   "url": "https://www.sec.gov/Archives/edgar/data/1423869/000142386926000036/pcb-20260930.htm",
+   "accession": "0001423869-26-000036",
+   "form": "10-Q",
+   "filed": "2026-11-05"
+  },
+  {
+   "task_id": "edgar-10q-1794776",
+   "url": "https://www.sec.gov/Archives/edgar/data/1794776/000119312526446165/psbd-20260930.htm",
+   "accession": "0001193125-26-446165",
+   "form": "10-Q",
+   "filed": "2026-11-04"
+  },
+  {
+   "task_id": "edgar-10q-1134115",
+   "url": "https://www.sec.gov/Archives/edgar/data/1134115/000110465926125330/thm-20260930x10q.htm",
+   "accession": "0001104659-26-125330",
+   "form": "10-Q",
+   "filed": "2026-11-10"
+  },
+  {
+   "task_id": "edgar-10q-1437071",
+   "url": "https://www.sec.gov/Archives/edgar/data/1437071/000143707126000086/ivr-20260930.htm",
+   "accession": "0001437071-26-000086",
+   "form": "10-Q",
+   "filed": "2026-11-06"
+  },
+  {
+   "task_id": "edgar-10q-1919182",
+   "url": "https://www.sec.gov/Archives/edgar/data/1919182/000117152026000320/eps12919_utkn.htm",
+   "accession": "0001171520-26-000320",
+   "form": "10-Q",
+   "filed": "2026-11-03"
+  },
+  {
+   "task_id": "edgar-10q-2131524",
+   "url": "https://www.sec.gov/Archives/edgar/data/2131524/000162828026072709/bhb-20260930.htm",
+   "accession": "0001628280-26-072709",
+   "form": "10-Q",
+   "filed": "2026-11-10"
+  },
+  {
+   "task_id": "edgar-10q-1999784",
+   "url": "https://www.sec.gov/Archives/edgar/data/1999784/000199978426000083/ck0001999784-20260930.htm",
+   "accession": "0001999784-26-000083",
+   "form": "10-Q",
+   "filed": "2026-11-06"
+  },
+  {
+   "task_id": "edgar-10q-1664710",
+   "url": "https://www.sec.gov/Archives/edgar/data/1664710/000166471026000066/kros-20260930.htm",
+   "accession": "0001664710-26-000066",
+   "form": "10-Q",
+   "filed": "2026-11-05"
+  },
+  {
+   "task_id": "edgar-10q-1486957",
+   "url": "https://www.sec.gov/Archives/edgar/data/1486957/000148695726000051/bwxt-20260930.htm",
+   "accession": "0001486957-26-000051",
+   "form": "10-Q",
+   "filed": "2026-11-02"
+  },
+  {
+   "task_id": "edgar-10q-1657788",
+   "url": "https://www.sec.gov/Archives/edgar/data/1657788/000110465926123313/krp-20260930x10q.htm",
+   "accession": "0001104659-26-123313",
+   "form": "10-Q",
+   "filed": "2026-11-05"
+  },
+  {
+   "task_id": "edgar-10q-714395",
+   "url": "https://www.sec.gov/Archives/edgar/data/714395/000071439526000045/gabc-20260930.htm",
+   "accession": "0000714395-26-000045",
+   "form": "10-Q",
+   "filed": "2026-11-06"
+  },
+  {
+   "task_id": "edgar-10q-1854963",
+   "url": "https://www.sec.gov/Archives/edgar/data/1854963/000149315226050640/form10-q.htm",
+   "accession": "0001493152-26-050640",
+   "form": "10-Q",
+   "filed": "2026-11-09"
+  },
+  {
+   "task_id": "edgar-10q-1628171",
+   "url": "https://www.sec.gov/Archives/edgar/data/1628171/000119312526447253/rvmd-20260930.htm",
+   "accession": "0001193125-26-447253",
+   "form": "10-Q",
+   "filed": "2026-11-04"
+  },
+  {
+   "task_id": "edgar-10q-1056943",
+   "url": "https://www.sec.gov/Archives/edgar/data/1056943/000110465926123852/pfis-20260930x10q.htm",
+   "accession": "0001104659-26-123852",
+   "form": "10-Q",
+   "filed": "2026-11-06"
+  },
+  {
+   "task_id": "edgar-10q-1465470",
+   "url": "https://www.sec.gov/Archives/edgar/data/1465470/000149315226050921/form10-q.htm",
+   "accession": "0001493152-26-050921",
+   "form": "10-Q",
+   "filed": "2026-11-10"
+  },
+  {
+   "task_id": "edgar-10q-1958140",
+   "url": "https://www.sec.gov/Archives/edgar/data/1958140/000110465926122382/batra-20260930x10q.htm",
+   "accession": "0001104659-26-122382",
+   "form": "10-Q",
+   "filed": "2026-11-04"
+  },
+  {
+   "task_id": "edgar-form4-0000101382-26-000190",
+   "url": "https://www.sec.gov/Archives/edgar/data/101382/000010138226000190/xslF345X06/form4.xml",
+   "accession": "0000101382-26-000190",
+   "form": "4",
+   "filed": "2026-11-03"
+  },
+  {
+   "task_id": "edgar-form4-0002062367-26-000013",
+   "url": "https://www.sec.gov/Archives/edgar/data/1495932/000206236726000013/xslF345X06/primarydocument.xml",
+   "accession": "0002062367-26-000013",
+   "form": "4",
+   "filed": "2026-11-06"
+  },
+  {
+   "task_id": "edgar-form4-0001924581-26-000009",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000192458126000009/xslF345X06/wk-form4_1793919636.xml",
+   "accession": "0001924581-26-000009",
+   "form": "4",
+   "filed": "2026-11-05"
+  },
+  {
+   "task_id": "edgar-form4-0001853089-26-000014",
+   "url": "https://www.sec.gov/Archives/edgar/data/1459839/000185308926000014/xslF345X06/primarydocument.xml",
+   "accession": "0001853089-26-000014",
+   "form": "4",
+   "filed": "2026-11-06"
+  },
+  {
+   "task_id": "edgar-form4-0002085143-26-000010",
+   "url": "https://www.sec.gov/Archives/edgar/data/1125376/000208514326000010/xslF345X06/wk-form4_1794353110.xml",
+   "accession": "0002085143-26-000010",
+   "form": "4",
+   "filed": "2026-11-10"
+  },
+  {
+   "task_id": "edgar-form4-0001628280-26-072371",
+   "url": "https://www.sec.gov/Archives/edgar/data/1655759/000162828026072371/xslF345X06/wk-form4_1794265495.xml",
+   "accession": "0001628280-26-072371",
+   "form": "4",
+   "filed": "2026-11-09"
+  }
+ ]
+}
