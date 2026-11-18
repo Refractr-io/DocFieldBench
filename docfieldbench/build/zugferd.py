@@ -23,7 +23,7 @@ from pathlib import Path
 from ..tasks import validate_task
 from . import pdf
 from .cii import parse_cii
-from .common import decimal_mark, language, sha256, slug, write_task
+from .common import date_order_from_evidence, decimal_mark, language, sha256, slug, write_task
 from .families import INVOICE_LABELS, INVOICE_MATCH, INVOICE_SCHEMA, LINE_ITEM_MATCH, ibans, vat_numbers
 from .visibility import TextIndex
 
@@ -139,7 +139,8 @@ def build_task(f: Path, rel: str, rec: dict, pages: list[str], family: str, viz:
         "source": "zugferd-corpus",
         "source_ref": {"repository": "https://github.com/ZUGFeRD/corpus", "commit": commit, "path": rel},
         "license": "Apache-2.0", "published": None,
-        "language": language(idx.text), "locale": {"date_order": "DMY", "decimal": decimal_mark(idx.text)},
+        "language": language(idx.text),
+        "locale": {"date_order": date_order_from_evidence(fields), "decimal": decimal_mark(idx.text)},
         "document": {"path": f"docs/{tid}.pdf", "media_type": "application/pdf", "pages": pdf.page_count(f),
                      "condition": "born_digital"},
         "variant_of": None, "layout_family": family, "xml_visualisation": viz,

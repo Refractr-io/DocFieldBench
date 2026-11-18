@@ -96,3 +96,15 @@ def test_judicial_titles_and_number_labels():
     assert same("name", "SIMS", "SIMS, Acting P. J.") and same("name", "TURNER", "TURNER, P. J.")
     assert same("id", "H034702", "No. H034702") and same("id", "3-05-0550", "Nos. 3-05-0550")
     assert not same("id", "NO123456789MVA", "123456789MVA")          # a Norwegian VAT number keeps its letters
+    assert same("id", "2050-AH39", "RIN 2050-AH39") and same("id", "2026-07889", "FR Doc. 2026–07889")
+
+
+def test_date_order_from_evidence():
+    from docfieldbench.build.common import date_order_from_evidence
+    f = {"/d": {"match": "date", "status": "present", "value": "2017-11-03",
+                "evidence": {"text": "Invoice Date 11/03/2017"}}}
+    assert date_order_from_evidence(f) == "MDY"
+    f["/d"]["evidence"]["text"] = "Rechnungsdatum 03.11.2017"
+    assert date_order_from_evidence(f) == "DMY"
+    f["/d"]["value"], f["/d"]["evidence"]["text"] = "2017-03-03", "03/03/2017"          # ambiguous: keep the default
+    assert date_order_from_evidence(f, "DMY") == "DMY"

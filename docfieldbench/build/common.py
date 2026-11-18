@@ -44,6 +44,28 @@ def decimal_mark(text: str) -> str:
     return "," if comma > dot else "."
 
 
+_NUMERIC_DATE = re.compile(r"(?<!\d)(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})(?!\d)")
+
+
+def date_order_from_evidence(fields: dict, default: str = "DMY") -> str:
+    """'DMY' or 'MDY': which reading of the document's printed numeric dates gives the gold dates. A printed
+    11/03/2017 whose gold is 2017-11-03 votes MDY. Ambiguous dates (day = month) and no evidence keep the default."""
+    from ..normalize import parse_date
+    votes = {"DMY": 0, "MDY": 0}
+    for r in fields.values():
+        if r.get("match") != "date" or r.get("status") != "present":
+            continue
+        for m in _NUMERIC_DATE.finditer((r.get("evidence") or {}).get("text") or ""):
+            ok = {o for o in votes if (parse_date(m.group(0), o) or [None])[0] == r["value"]}
+            if len(ok) == 1:
+                votes[ok.pop()] += 1
+    if votes["MDY"] > votes["DMY"]:
+        return "MDY"
+    if votes["DMY"] > votes["MDY"]:
+        return "DMY"
+    return default
+
+
 def _write_json(out: Path, task: dict) -> None:
     tdir = out / "tasks"
     tdir.mkdir(parents=True, exist_ok=True)

@@ -14,7 +14,7 @@
  "published": null,
  "language": "en",
  "locale": {
-  "date_order": "DMY",
+  "date_order": "MDY",
   "decimal": "."
  },
  "document": {
