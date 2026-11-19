@@ -24,7 +24,7 @@ each track. The metrics below explain the score:
 - **Precision:** of the values a system returns, how many are right. One minus precision is the *silent error rate*:
   wrong, swapped or invented values that a pipeline would store without noticing.
 - **Recall:** of the values a document contains, how many come back right.
-- **Abstention:** of the fields a document does *not* contain, how many come back empty. About one field in eight is
+- **Abstention:** of the fields a document does *not* contain, how many come back empty. About one field in seven is
   absent by design, verified against the document.
 - **Swaps:** a value that belongs to another field of the same document (the buyer's name as the seller's).
 - **Conformance:** first responses that parse and match the schema. Retries are recorded, never scored.

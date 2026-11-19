@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use DocFieldBench, please cite it as below."
+title: "DocFieldBench: an open benchmark for structured extraction from documents"
+type: dataset
+authors:
+  - name: "DocFieldBench contributors"
+version: 1.0.0
+date-released: 2026-11-18
+license: Apache-2.0

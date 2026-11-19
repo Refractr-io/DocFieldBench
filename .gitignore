@@ -17,3 +17,8 @@ data/*/reps/
 
 # local guard patterns (never committed)
 .guard-local
+
+# build inputs and candidates: pre-adjudication answer keys, never a release (score against data/v1.0.0)
+/data/v1.0.0-dev/
+/data/v1.0.0-new/
+/data/v1.0.0-rc1/

@@ -1,7 +1,8 @@
 # Data licenses
 
-Every document in a release has its source in its task file (`source`, `source_ref`, `license`) and a sha256 in
-`manifest.json`. This page summarises them. Schemas and gold written for DocFieldBench are CC BY 4.0.
+Every document in a release has its source and license in its task file (`source`, `license`; `source_ref` where
+the source has a per-document reference, otherwise the `task_id` carries the source's own identifier) and a sha256
+in `manifest.json`. This page summarises them. Schemas and gold written for DocFieldBench are CC BY 4.0.
 
 | source | documents | license | notes |
 |---|---|---|---|

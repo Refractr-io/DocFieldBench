@@ -2,6 +2,9 @@
 
 ## 1.0.0 (2026-11-18)
 - Package and data are both v1.0.0.
+- The build-input folders (`data/v1.0.0-dev`, `data/v1.0.0-new`) are no longer in the repository: they held the
+  answer keys from before adjudication. `data/v1.0.0` is the only data to score against.
+- `CONTRIBUTING.md` (gold reports, result submissions) and `CITATION.cff` added.
 - Data build: 260 documents in three tracks plus 86 scan/photo variants; absence library, field
   tags (lookalike, normalize, late, language), Rule 0 gate, PII and layout gates, manifest and diversity card.
 - `docfieldbench run` (plain requests, OpenAI-compatible and Python adapters, native / page-image / text reading
