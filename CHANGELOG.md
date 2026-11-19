@@ -1,6 +1,7 @@
 # Changelog
 
-## Data v1.0.0 (2026-11-18)
+## 1.0.0 (2026-11-18)
+- Package and data are both v1.0.0.
 - Data build: 260 documents in three tracks plus 86 scan/photo variants; absence library, field
   tags (lookalike, normalize, late, language), Rule 0 gate, PII and layout gates, manifest and diversity card.
 - `docfieldbench run` (plain requests, OpenAI-compatible and Python adapters, native / page-image / text reading
